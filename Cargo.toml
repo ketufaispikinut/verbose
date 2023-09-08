@@ -1,0 +1,15 @@
+[package]
+name = "verbose"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+either = "1.9.0"
+lazy_static = "1.4.0"
+rmp = "0.8.12"
+rmp-serde = "1.1.2"
+serde = {version="1.0.188",features=["derive"]}
+[target.x86_64-apple-darwin]#-linux-musl-gcc
+linker = "x86_64-apple-darwin"#-linux-musl-gcc
