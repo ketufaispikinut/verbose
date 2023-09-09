@@ -25,7 +25,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: build_ubuntu_latest
-        path: target/release/verbose
+        path: target/release
   build_mac:
 
     runs-on: macos-latest
@@ -37,6 +37,6 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: build_macos_latest
-        path: target/release/verbose
+        path: target/release
     - name: Run tests
       run: cargo test --verbose
