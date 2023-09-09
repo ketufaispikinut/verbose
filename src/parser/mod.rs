@@ -11,6 +11,7 @@ pub struct TokenBox {
     pub vec: Vec<Token>,
     pub index: usize,
 }
+
 impl TokenBox {
     pub fn next(&mut self) -> Token {
         //s
@@ -41,7 +42,7 @@ pub fn parse_rearrange(lexer: &Lexer) -> Vec<Token> {
     let mut vec_of_tokens = Vec::new(); //c
     while !&k.is_at_end() {
         while isop(&k.peek().token) {
-            let mut c = back_to_tokens(parse(&mut k, 0)); //
+            let mut c = back_to_tokens(parse(&mut k, 0),false); //
             vec_of_tokens.append(&mut c.0);
         }
         if !k.is_at_end() {
@@ -178,7 +179,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
     //println!("PARSE EXIT");
     lhs
 }
-pub fn back_to_tokens(b: ParseResult) -> (Vec<Token>, Type) {
+pub fn back_to_tokens(b: ParseResult,in_if:bool) -> (Vec<Token>, Type) {
     let mut k = Vec::new();
     let mut itype = Type::ANY;
 
@@ -189,7 +190,7 @@ pub fn back_to_tokens(b: ParseResult) -> (Vec<Token>, Type) {
             itype = d;
         }
         ParseResult::Cons(token, vec) => {
-            if token.token == Tokens::ASSIGN {
+            if token.token == Tokens::ASSIGN && !in_if {
                 if let Some(d) = vec.get(1 - 1) {
                     if let ParseResult::Atom(token, tp) = d {
                         //_
@@ -219,7 +220,7 @@ pub fn back_to_tokens(b: ParseResult) -> (Vec<Token>, Type) {
                 // let c=d.collect();
                 //k.append(c);
                 for i in d {
-                    k.append(&mut back_to_tokens(i).0);
+                    k.append(&mut back_to_tokens(i,in_if).0);
                 }
                 k.push(token);
                 return (k, Type::ANY); //itype
@@ -232,16 +233,16 @@ pub fn back_to_tokens(b: ParseResult) -> (Vec<Token>, Type) {
                 //d.next();
                 // let c=d.collect();
                 //k.append(c);
-                for i in d {
-                    k.append(&mut back_to_tokens(i).0);
+                for i in d {//in_if
+                    k.append(&mut back_to_tokens(i,true).0);
                 }
                 k.push(token);
                 return (k,Type::ANY);
             }
             //V//T
             for i in vec {
-                //V
-                let t = &mut back_to_tokens(i); //.0
+                //V//in_if
+                let t = &mut back_to_tokens(i,token.token==Tokens::IF||token.token==Tokens::LOOP||in_if); //.0
                 match t.1 {
                     //itype
                     Type::BOOL => {
@@ -250,8 +251,10 @@ pub fn back_to_tokens(b: ParseResult) -> (Vec<Token>, Type) {
                         } else if token.token != Tokens::EQUAL
                             && token.token != Tokens::IF
                             && token.token != Tokens::LOOP
+                            &&token.token!=Tokens::ASSIGN
                         {
-                            //u texte// (sauf l'addition)
+                            //u texte// (sauf l'addition)//D
+                           // println!("{:?}",token.token);
                             error_parser(token.start,token.line as usize,"Il est impossible de faire des opérations mathématiques sur des oui ou des non".to_string());
                         }
                     }
@@ -280,7 +283,17 @@ pub fn back_to_tokens(b: ParseResult) -> (Vec<Token>, Type) {
                 }
                 k.append(&mut t.0); //b//push
             }
+
             k.push(token); //T
+        }
+    }
+    if &k.clone().into_iter().last().unwrap().token==&Tokens::IF{
+        //let mut n=0;
+        for i in &mut k{
+            if i.token==Tokens::ASSIGN{
+                i.token=Tokens::EQUAL;
+            }
+            //n+=1;
         }
     }
     (k, itype)
@@ -335,6 +348,7 @@ pub fn error_parser(char_index: usize, line_number: usize, message: String) {
 }
 pub const ERROR_INSTANTLY_QUITS: bool = !false; //error_instantly_quitserror_instantly_quits//!
 pub const DEBUG_PARSER: bool = false;
+pub const VAUT_DANS_LES_SI_EQUIVAUT_A_EGAL:bool=true;
 pub fn is_bool(d: String) -> bool {
     match d.as_str() {
         "Oui" | "oui" => true,
