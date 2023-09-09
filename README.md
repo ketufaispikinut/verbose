@@ -10,4 +10,4 @@ cd verbose
 cargo build --release
 
 ```
-L'exécutable sera dans `build/release` et portera le nom 'verbose'. Il ne vous restera plus qu'à le déplacer vers le fichier `bin` de votre ordinateur (ou n'importe lequel fichier figurant dans la variable environnement `PATH`) pour pouvoir utiliser l'ILC.
+L'exécutable sera dans `build/release` et portera le nom 'verbose'. Il ne vous restera plus qu'à le déplacer vers le fichier `bin` de votre ordinateur (ou n'importe lequel fichier figurant dans la variable environnement `PATH`) pour pouvoir utiliser verbose dans un terminal.
