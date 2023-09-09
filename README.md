@@ -10,4 +10,4 @@ cd verbose
 cargo build --release
 
 ```
-L'exécutable sera dans build/release et portera le nom 'verbose'.
+L'exécutable sera dans `build/release` et portera le nom 'verbose'.
