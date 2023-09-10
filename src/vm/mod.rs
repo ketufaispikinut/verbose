@@ -3,6 +3,7 @@ use std::{
     io::{self, BufRead, Write},
     time::SystemTime
 }; //, ops::IndexMut//{//}
+mod instruction_debugger;
 
 use rmp_serde::decode::Error;
 use serde::{Deserialize, Serialize};
@@ -94,9 +95,13 @@ impl MachineVirtuelle {
         fatal!()
     }
 
-    pub fn start(&mut self) {
+    pub fn start(&mut self, print_instructions: bool) {
         if self.instructions.is_empty() {
             return;
+        }
+
+        if print_instructions {
+            instruction_debugger::print_instructions(&self.instructions);
         }
 
         //const VM_DEBUG_LAYER: bool = ;
