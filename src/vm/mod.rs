@@ -1,10 +1,10 @@
 use std::{
     collections::HashMap,
     io::{self, BufRead, Write},
-    time::{UNIX_EPOCH,SystemTime}
+    time::SystemTime
 }; //, ops::IndexMut//{//}
 
-use rmp_serde::{decode::Error, Deserializer, Serializer};
+use rmp_serde::decode::Error;
 use serde::{Deserialize, Serialize};
 //use rmp::{Deserializer, Serializer};//s
 use crate::fatal;
@@ -35,6 +35,7 @@ impl MachineVirtuelle {
         // }
         //String::new()
     }
+
     pub fn deserialize(d: Vec<u8>) -> MachineVirtuelle {//String
         let mut mv = MachineVirtuelle::new(None);
         let k: Result<Vec<Chunk>, Error> = rmp_serde::from_slice(&d); //read(rd)//&selffrom_u8////String::as_bytes(&d)
@@ -45,6 +46,7 @@ impl MachineVirtuelle {
         }
         mv
     }
+
     pub fn new(str: Option<String>) -> MachineVirtuelle {
         //()//()
         MachineVirtuelle {
@@ -55,13 +57,15 @@ impl MachineVirtuelle {
             text: str, //Option<String>,
             depth: 0,
             var_map: vec![HashMap::new()], //;
-            time:0//u32
+            time: 0//u32
         }
     }
+
     pub fn chunk(&mut self, chunk: Chunk, start: usize, line: usize) {
         self.instructions.push(chunk); //chu
         self.instructions_origins.push((start, line));
     }
+
     pub fn error(&mut self, message: String) -> ! {
         //let n=;
         println!("\nErreur!");
@@ -99,7 +103,7 @@ impl MachineVirtuelle {
         if VM_DEBUG_LAYER {
             let mut n = 0;
             for i in &self.instructions {
-                println!("{}\t {:?}", n, i,);
+                println!("{}\t {:?}", n, i);
                 n += 1;
             }
         }
@@ -124,8 +128,8 @@ impl MachineVirtuelle {
                                              //println!("{:?}",self.stack);
             match r.clone() {
                 Chunk::CLOCK=>{
-                    let d=SystemTime::now().duration_since(start).expect("Le temps a reculé");//earlier//msg
-                    let k=d.as_millis() as i32;
+                    let d = SystemTime::now().duration_since(start).expect("Le temps a reculé");//earlier//msg
+                    let k = d.as_millis() as i32;
                     self.spawn(ValueContainer::new_num(k,0));//self.stack.push()
                 }
                 Chunk::VARIABLEREF(dddd) => {
@@ -157,17 +161,17 @@ impl MachineVirtuelle {
                     //string
                     self.spawn(ValueContainer::new_num(dddd, 0)); // { value: (), index: () }//value, index
                 }
-                Chunk::GREATER=>{
+                Chunk::GREATER => {
                     let a=self.pop();//>//<//c//c
                     let b=self.pop();
                     
-                    self.spawn(ValueContainer::new_bool(b.i32_val()>a.i32_val(),0) );//d
+                    self.spawn(ValueContainer::new_bool(b.i32_val() > a.i32_val(), 0));//d
                 }//()
-                Chunk::SMALLER=>{//GREATER
+                Chunk::SMALLER => {//GREATER
                     let a=self.pop();//>//<//c//c
                     let b=self.pop();
                     //>
-                    self.spawn(ValueContainer::new_bool(b.i32_val()<a.i32_val(),0) );//d
+                    self.spawn(ValueContainer::new_bool(b.i32_val() < a.i32_val(), 0));//d
                 }//()
                 Chunk::ASSIGN => {
                     let value = self.pop();
@@ -186,7 +190,7 @@ impl MachineVirtuelle {
                             //k//str()
                             //i[&index.str()]=value;
                             {
-                            let c=i.get(&index.i32_val());
+                            let c = i.get(&index.i32_val());
                             if !c.unwrap().same_type_as(&value){//val
                                 self.error(format!("Erreur! La variable {} n'as pas le même type que la variable qu'on lui assigne!",index.i32_val()));//_
                             }
@@ -348,8 +352,8 @@ impl MachineVirtuelle {
         }
     }
 }
-#[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //Copy,
 
+#[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //Copy,
 pub enum Chunk {
     //struct
     CLOCK,
@@ -373,6 +377,7 @@ pub enum Chunk {
     END,
     IGNORE,
 }
+
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize)]
 pub enum Value {
     INT(i32),
@@ -380,6 +385,7 @@ pub enum Value {
     BOOL(bool),
     FLOAT(f32),
 }
+
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //,Copy//,IndexMut
 pub struct ValueContainer {
     //Box<//>
@@ -387,23 +393,24 @@ pub struct ValueContainer {
 
     pub index: u32, //pub value:
 }
+
 impl ValueContainer {
-    pub fn same_type_as(&self,other:&ValueContainer)->bool{
+    pub fn same_type_as(&self, other: &ValueContainer)->bool{
 //d 
-        return self.type_i32()==other.type_i32()
+        return self.type_i32() == other.type_i32()
     }
-    pub fn type_i32(&self)->i32{
+    pub fn type_i32(&self) -> i32{
         match self.value{
-            Value::INT(_)=>{
+            Value::INT(_) => {
                 0
             }
-            Value::BOOL(_)=>{
+            Value::BOOL(_) => {
                 1
             }
-            Value::STRING(_)=>{
+            Value::STRING(_) => {
                 2
             }
-            Value::FLOAT(_)=>{
+            Value::FLOAT(_) => {
                 3
             }
         }
@@ -411,13 +418,13 @@ impl ValueContainer {
     pub fn new_string(value: String, index: u32) -> ValueContainer {
         ValueContainer {
             value: Value::STRING(value), //Either::Left(Either::Left(value)),
-            index: index,
+            index,
         } //()
     }
     pub fn new_float(value: f32, index: u32) -> ValueContainer {
         ValueContainer {
             value: Value::FLOAT(value),
-            index: index,
+            index,
         } //()//()
     }
     pub fn div(mut self, b: ValueContainer) -> ValueContainer {
@@ -446,7 +453,7 @@ impl ValueContainer {
         let a = self.i32_val(); //r//b
         let b = b.i32_val(); //: ValueContainer
         self.value = Value::INT(a * b); //-
-        ///
+        //
         self
     }
     pub fn str(&self) -> String {
@@ -511,6 +518,7 @@ impl ValueContainer {
             }
         }
     }
+    
     pub fn new_bool(value: bool, index: u32) -> ValueContainer {
         //bool
         ValueContainer {
@@ -519,6 +527,7 @@ impl ValueContainer {
             index: index,
         } //()
     }
+    
     pub fn new_num(value: i32, index: u32) -> ValueContainer {
         //()
         ValueContainer {
@@ -527,6 +536,7 @@ impl ValueContainer {
             index: index,
         } //()
     }
+    
     pub fn is_true(&self) -> bool {
         match &self.value {
             Value::INT(d) => {

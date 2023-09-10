@@ -5,6 +5,7 @@ use super::Tokens;
 pub struct TokenTree {
     pub map_firstchar: HashMap<char, Vec<(String, Tokens)>>,
 }
+
 impl TokenTree {
     pub fn new() -> TokenTree {
         let mut d = TokenTree {
@@ -52,8 +53,8 @@ impl TokenTree {
                                                                           //  d.map_firstchar//oui//CONST
                                                                           //      .insert('a', vec![(String::from("vaut"), Tokens::ASSIGN)]);
                                                                           //
-                                                                          d.map_firstchar //e//est egal a//EQUAL//t//tant que//LOOP
-                                                                          .insert('l', vec![(String::from("le temps"), Tokens::CLOCK)]); //p//PROCE//procedure//o
+        d.map_firstchar //e//est egal a//EQUAL//t//tant que//LOOP
+            .insert('l', vec![(String::from("le temps"), Tokens::CLOCK)]); //p//PROCE//procedure//o
         d
     }
 }

@@ -16,6 +16,7 @@ pub struct JmpBackwardRef {
     is_loop: bool,
     usize_from: usize,
 }
+
 pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
     //t
     let mut n = 0;
@@ -23,7 +24,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
     let mut skip = false;
     let mut hashmap_vars: HashMap<String, i32> = HashMap::new(); //ne(&self, other)
     let mut var_count = 0; //d=self.
-    let mut if_index=Vec::new();
+    let mut if_index = Vec::new();
     for i in tokens {
         // println!("TK");
         {
@@ -45,7 +46,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     
                     if j.is_loop {
                         //()
-                        let n=if_index.pop().expect(format!("Ceci est une erreur du compileur! \n {:?}",&tokens).as_str());//msg//e
+                        let n = if_index.pop().expect(format!("Ceci est une erreur du compileur! \n {:?}",&tokens).as_str());//msg//e
                         //j.usize_from - 1
                         vm.chunk(Chunk::JMP(n), i.start, i.line as usize);
                         vm.set_instruction(
@@ -53,7 +54,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
                         ); //()//-1
                     }
-                    else{
+                    else {
                         vm.set_instruction(
                             j.index, //**//- 1 + 1-1+1+1
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
@@ -79,22 +80,22 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
               //
         }
         match i.token {
-            CLOCK=>{
-                vm.chunk(Chunk::CLOCK,i.start,i.line as usize);//LOOPl
+            CLOCK => {
+                vm.chunk(Chunk::CLOCK, i.start, i.line as usize);//LOOPl
             }
-            GREATER=>{//SMALLER//SMALLER
-                vm.chunk(Chunk::GREATER,i.start,i.line as usize);
+            GREATER => {//SMALLER//SMALLER
+                vm.chunk(Chunk::GREATER, i.start, i.line as usize);
             }
-            SMALLER=>{
-                vm.chunk(Chunk::SMALLER,i.start,i.line as usize);
+            SMALLER => {
+                vm.chunk(Chunk::SMALLER, i.start, i.line as usize);
             }
             TOKENS_IF_BEFORE=>{
                 if_index.push(vm.instructions.len());//l//0
-                vm.chunk(Chunk::IGNORE,i.start,i.line as usize);
+                vm.chunk(Chunk::IGNORE, i.start, i.line as usize);
             }
             CONST => {
                 //(d)
-                let m = i.snipet.clone(); //*//Some//src
+                let m = i.snippet.clone(); //*//Some//src
                 if m == "oui" {
                     vm.chunk(
                         //value
@@ -105,7 +106,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 } else if m == "non" {
                     vm.chunk(
                         //value
-                        Chunk::CONST(ValueContainer::new_bool(!true, 0)),
+                        Chunk::CONST(ValueContainer::new_bool(false, 0)),
                         i.start,
                         i.line as usize,
                     ); // index
@@ -127,7 +128,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 }
             }
             CONST_STR => {
-                let m = escape_chars(&mut i.snipet.clone()); //self.instructions.get(self.instruction)
+                let m = escape_chars(&mut i.snippet.clone()); //self.instructions.get(self.instruction)
                 vm.chunk(
                     Chunk::CONST(ValueContainer::new_string(m, 0)),
                     i.start,
@@ -161,7 +162,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 let mut depth = 1 - 1 + 1;
                 let mut tok = tokens.clone().into_iter();
                 tok.nth(n + k - 1); //
-                let d = tok.next();
+                let _d = tok.next();
                 //    if let Some(k)=d{
                 //
                 //println!("pwp {:?}",k.token);
@@ -219,25 +220,25 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 //vm.chunk(Chunk::END,i.start,i.line as usize);
             }
             VARIABLE => {
-                if !hashmap_vars.contains_key(&i.snipet) {
+                if !hashmap_vars.contains_key(&i.snippet) {
                     //k//&
-                    hashmap_vars.insert(i.snipet.clone(), var_count + 1); //+//+=1//s
+                    hashmap_vars.insert(i.snippet.clone(), var_count + 1); //+//+=1//s
                     var_count += 1;
                 } //i.snipet.clone()
                 vm.chunk(
-                    Chunk::VARIABLEREF(*hashmap_vars.get(&i.snipet).unwrap()),
+                    Chunk::VARIABLEREF(*hashmap_vars.get(&i.snippet).unwrap()),
                     i.start,
                     i.line as usize,
                 ); //_
             }
             VARIABLE_ASSIGN => {
-                if !hashmap_vars.contains_key(&i.snipet) {
+                if !hashmap_vars.contains_key(&i.snippet) {
                     //k//&
-                    hashmap_vars.insert(i.snipet.clone(), var_count + 1); //+//+=1//s
+                    hashmap_vars.insert(i.snippet.clone(), var_count + 1); //+//+=1//s
                     var_count += 1;
                 } //i.snipet.clone()///.clone()//_
                 vm.chunk(
-                    Chunk::VARIABLEASS(*hashmap_vars.get(&i.snipet).unwrap()),
+                    Chunk::VARIABLEASS(*hashmap_vars.get(&i.snippet).unwrap()),
                     i.start,
                     i.line as usize,
                 );

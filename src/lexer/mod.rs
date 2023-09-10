@@ -20,19 +20,22 @@ pub struct Token {
     pub line: i32,
     pub start: usize,
     pub end: usize,
-    pub snipet: String,
+    pub snippet: String,
 } //lexer
+
 impl Token {
-    pub fn from(token: Tokens, line: i32, start: usize, end: usize, snipet: String) -> Token {
+    pub fn from(token: Tokens, line: i32, start: usize, end: usize, snippet: String) -> Token {
         Token {
-            token: token,
-            line: line,
-            start: start,
-            end: end,
-            snipet: snipet,
+            token,
+            line,
+            start,
+            end,
+            snippet,
         }
     }
 }
+
+#[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Clone)] //,Copy
 pub enum Tokens {
     //struct
@@ -84,7 +87,7 @@ pub enum Tokens {
 }
 
 pub struct Lexer {
-    pub str: String,
+    pub string: String,
     pub start: usize,
     pub index: usize,
 
@@ -93,6 +96,7 @@ pub struct Lexer {
     pub last_token_type: Tokens,
     pub tokentree: TokenTree,
 }
+
 impl Lexer {
     pub fn from(d: String) -> Lexer {
         let mut t = FILE.lock().unwrap();
@@ -100,7 +104,7 @@ impl Lexer {
         //d.clone();
         Lexer {
             //unidecode(
-            str: d, //.to_lowercase(), //_
+            string: d, //.to_lowercase(), //_
             index: 0,
             tokens: Vec::new(),
             line: 0,
@@ -109,12 +113,13 @@ impl Lexer {
             tokentree: TokenTree::new(),
         }
     }
+
     pub fn error(&mut self, message: String) -> ! {
         //let n=;
         println!("\nErreur! (Pendant le scannage)");
         println!("{}", message);
         //if let Some(d)=&self.str{//n//text
-        let d = self.str.clone();
+        let d = self.string.clone();
         let n = d.split("\n"); //pat
                                //let r=self.index;//self.instructions_origins.get(self.instruction).unwrap();
         let mut it = 0;
@@ -124,7 +129,7 @@ impl Lexer {
             if it == self.line {
                 //r.1
                 println!("{}", i); //r.0//index
-                for _i in 0..(index - ofs - 1 - 1) {
+                for _ in 0..(index - ofs - 2) {
                     ////self.
                     print!(" ");
                 } //r.1//index
@@ -197,7 +202,7 @@ impl Lexer {
                     print!(
                         "{0:<40}\"{1:<0}\"\n",
                         format!("{:?}", token.token),
-                        token.snipet
+                        token.snippet
                     ); //m// {}
                 }
             }
@@ -264,13 +269,13 @@ impl Lexer {
         let binding = self.skip_whitespace_advance();
         self.start = self.index.clone();
         let binding2 = binding.clone();
-        let mut char = binding2.char_indices();
+        let mut chr = binding2.char_indices();
 
-        if let Some(char) = &char.next() {
+        if let Some(chr) = &chr.next() {
             // let mut rd=false;else
             //d//.unwrap()
-            let char = char.1;
-            match char {
+            let chr = chr.1;
+            match chr {
                 //| '\n'//.as_str().chars().next().unwrap()
                 ' ' => {}
                 '/' => {
@@ -297,7 +302,7 @@ impl Lexer {
                     return self.make_token(Tokens::PARDRO); //t
                 }
                 '\"' => {
-                    let mut str = String::new(); //self.peek(len)
+                    let mut string = String::new(); //self.peek(len)
                                                  //self.advance();
                                                  //self.advance();
                                                  //self.advance();
@@ -309,7 +314,7 @@ impl Lexer {
                             if n.ends_with("n") {
                                 //println!("D");
                                 //println!("ESCAPE CHAR");
-                                str += "\n";
+                                string += "\n";
                                 self.advance();
                                 self.advance();
                                 continue;
@@ -317,7 +322,7 @@ impl Lexer {
                         }
                         //pat
                         //println!("{}",str);
-                        str += &(self.advance()); //push
+                        string += &(self.advance()); //push
                     } //len
                       //self.i
                       //str=str.replacen("\"", "", 1);//if //2
@@ -327,34 +332,34 @@ impl Lexer {
                 //''=>{
 
                 //}
-                _t => {
-                    if is_digit(_t) {
-                        while (match self.peek_1() {
+                t => {
+                    if is_digit(t) {
+                        while match self.peek_1() {
                             '.' => true,
                             _t => {
                                 is_digit(_t) //char
                             }
-                        }) {
+                        } {
                             self.advance();
                         }
                         return self.make_token(Tokens::CONST);
                         //println!("number");
                     }
                     //char
-                    else if _t == '\n' {
+                    else if t == '\n' {
                         //&
                         self.line += 1;
                     } else {
                         let mut advlen = 0;
                         let mut token = Tokens::EOF;
-                        if let Some(d) = self.tokentree.map_firstchar.get(&_t.to_ascii_lowercase())
+                        if let Some(d) = self.tokentree.map_firstchar.get(&t.to_ascii_lowercase())
                         {
                             //println!("damn!");
                             for i in d {
                                 //.size_hint().1.unwrap()
                                 let d = format!(
                                     "{}{}",
-                                    _t,
+                                    t,
                                     self.peek(sizeof_char_indices(i.0.char_indices()) - 1)
                                 ); //.to_lowercase(); //0
                                    //println!("{}",d);
@@ -369,7 +374,7 @@ impl Lexer {
                                 }
                             }
                             if advlen > 0 {
-                                for _i in 0..advlen {
+                                for _ in 0..advlen {
                                     //i.0.len()-1
                                     self.advance();
                                 }
@@ -378,9 +383,9 @@ impl Lexer {
                         }
                         //println!("{}",d);
                     } //se //else
-                    if _t.is_alphabetic() {
+                    if t.is_alphabetic() {
                         //_whitespace//numeric//!//'
-                        while (self.peek_1().is_alphanumeric()) {
+                        while self.peek_1().is_alphanumeric() {
                             self.advance();
                         }
                         return self.make_token(Tokens::VARIABLE);
@@ -395,44 +400,48 @@ impl Lexer {
         return self//|       EQUAL                                   "est égal à 1"
             .error_token(&(String::from("Charactère inconnu '") + &binding + &String::from("'")));
     }
+
     pub fn get_chunk(&self, start: usize, end: usize) -> String {
         let mut k = String::new();
-        let mut it = self.str.char_indices();
-        for _i in 0..start - 1 {
+        let mut it = self.string.char_indices();
+        for _ in 0..start - 1 {
             it.next();
         }
-        for _i in 0..end - start + 1 {
+        for _ in 0..end - start + 1 {
             if let Some(d) = it.next() {
                 k.push(d.1);
             }
         }
         k
     }
+
     pub fn error_token(&mut self, text: &str) -> Token {
         Token {
             token: Tokens::ERROR(text.to_string()),
             line: self.line, // radix
             start: self.start,
             end: self.index, //d
-            snipet: self.get_chunk(self.start, self.index),
+            snippet: self.get_chunk(self.start, self.index),
         }
     }
-    pub fn make_token_str(&mut self, t: Tokens) -> Token {
+
+    pub fn make_token_str(&mut self, token: Tokens) -> Token {
         Token {
-            token: t,
+            token,
             line: self.line,
             start: self.start + 1,
             end: self.index - 1,
-            snipet: self.get_chunk(self.start + 1, self.index - 1),
+            snippet: self.get_chunk(self.start + 1, self.index - 1),
         }
     }
-    pub fn make_token(&mut self, t: Tokens) -> Token {
+
+    pub fn make_token(&mut self, token: Tokens) -> Token {
         Token {
-            token: t,
+            token,
             line: self.line,
             start: self.start,
             end: self.index,
-            snipet: self.get_chunk(self.start, self.index),
+            snippet: self.get_chunk(self.start, self.index),
         }
     }
 
@@ -441,7 +450,7 @@ impl Lexer {
         if self.at_end() {
             return String::from("");
         } //[self.index - 1..self.index]
-        if let Some(d) = self.str.char_indices().nth(self.index - 1) {
+        if let Some(d) = self.string.char_indices().nth(self.index - 1) {
             //+1
             //  println!("{} {}",d.1,self.str[self.index - 1..self.index].to_string());
             return d.1.to_string(); //;bg!()
@@ -450,7 +459,7 @@ impl Lexer {
         //return.unwrap()
     }
     pub fn at_end(&self) -> bool {
-        return self.index > self.str.len(); //=
+        return self.index > self.string.len(); //=
     }
     pub fn peek_1(&self) -> char {
         //, len: usize
@@ -484,19 +493,20 @@ impl Lexer {
         }
         ' '
     }
+
     pub fn peek(&self, len: usize) -> String {
         //=
-        if self.at_end() || self.index + len > self.str.len() {
+        if self.at_end() || self.index + len > self.string.len() {
             return String::from("");
         } else {
             //1
-            let mut k = self.str.char_indices();
-            for _i in 0..self.index {
+            let mut k = self.string.char_indices();
+            for _ in 0..self.index {
                 //k
                 k.next();
             }
             let mut n = String::new(); //len
-            for _i in 0..len {
+            for _ in 0..len {
                 if let Some(d) = k.next() {
                     n.push(d.1);
                 }
@@ -510,16 +520,18 @@ impl Lexer {
         }
     }
 }
-pub fn lex(str: String) -> Lexer {
+
+pub fn lex(string: String) -> Lexer {
     //&str
-    let mut m = Lexer::from(str); //d
+    let mut m = Lexer::from(string); //d
     let _d = m.lex(); //path
                       //println!("{}",_d.len());
     m
 }
-pub fn is_digit(char: char) -> bool {
+
+pub fn is_digit(chr: char) -> bool {
     //println!("{}")
-    return char.is_digit(10); //radix
+    return chr.is_digit(10); //radix
                               //return char>='0'&&char<='9';//""
 }
 
