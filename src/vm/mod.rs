@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 //use rmp::{Deserializer, Serializer};//s
 use crate::fatal;
 //use either::Either;
-const VM_DEBUG_LAYER: bool = false; // !//!//!//!!!//!//!//!
+const VM_DEBUG_LAYER: bool = !false; // !//!//!//!!!//!//!//!
 
 pub struct MachineVirtuelle {
     pub instruction: usize,
@@ -103,7 +103,11 @@ impl MachineVirtuelle {
         if VM_DEBUG_LAYER {
             let mut n = 0;
             for i in &self.instructions {
+<<<<<<< Updated upstream
                 println!("{}\t {:?}", n, i);
+=======
+                println!("{}\t {:?} \tLigne: {}", n, i,self.instructions_origins.get(n).unwrap().1+1);// //0
+>>>>>>> Stashed changes
                 n += 1;
             }
         }
@@ -133,6 +137,8 @@ impl MachineVirtuelle {
                     self.spawn(ValueContainer::new_num(k,0));//self.stack.push()
                 }
                 Chunk::VARIABLEREF(dddd) => {
+                    //println!("REF");
+                  //  println!("{:?}",self.var_map);
                     let mut i = 0;
                     let mut has_value = false;
                     for j in 0..self.var_map.len() {
@@ -174,6 +180,9 @@ impl MachineVirtuelle {
                     self.spawn(ValueContainer::new_bool(b.i32_val() < a.i32_val(), 0));//d
                 }//()
                 Chunk::ASSIGN => {
+            //        println!(
+          //      "{:?}",&self.var_map.len()
+         //           );
                     let value = self.pop();
 
                     let index = self.pop();
@@ -187,6 +196,7 @@ impl MachineVirtuelle {
                     let mut has_assigned = false;
                     for i in &mut self.var_map {
                         if i.contains_key(&(index.i32_val())) {
+                            //println!("FIRST");
                             //k//str()
                             //i[&index.str()]=value;
                             {
@@ -203,6 +213,7 @@ impl MachineVirtuelle {
                     let m = self.var_map.len() - 1;
                     //println!("{}",self.var_map.len());
                     if !has_assigned {
+                        //println!("NOUVELLE VARIABLE");
                         let d = self.var_map.get_mut(m);
                         if let Some(d) = d {
                             // d[&index.str()]=value;
@@ -251,7 +262,15 @@ impl MachineVirtuelle {
                     instruction_move = b;
                     //}
                 }
+                Chunk::JMPEND(b)=>{
+                    //println!("JMPEND");
+                    self.var_map.pop();
+                    self.depth-=1;
+                    should_instruction_move = true;
+                    instruction_move = b;
+                }
                 Chunk::JMPIFFALSE(b) => {
+                    println!("{:?}",self.stack);
                     //println!("DEEP");
                     self.var_map.push(HashMap::new()); // println!("R");
                     self.depth += 1;

@@ -5,7 +5,7 @@ C vaut 0
 EstPremier vaut oui
 Tant que oui alors
   C vaut C+1
-  Afficher C
+  Afficher "C: "+C
   Afficher "A.1: "+A
   A vaut A+1
   Afficher "A.2: "+A
@@ -17,7 +17,7 @@ Tant que oui alors
       EstPremier vaut non
     Fin
   Fin
-  Si EstPremier vaut oui alors
+  Si EstPremier alors
     Afficher "Nombre premier : "+A
   Fin
 Fin
