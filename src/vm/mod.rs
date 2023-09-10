@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     io::{self, BufRead, Write},
-    time::SystemTime
+    time::{SystemTime, Duration}, thread
 }; //, ops::IndexMut//{//}
 
 use rmp_serde::decode::Error;
@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 //use rmp::{Deserializer, Serializer};//s
 use crate::fatal;
 //use either::Either;
-const VM_DEBUG_LAYER: bool = !false; // !//!//!//!!!//!//!//!
+const VM_DEBUG_LAYER: bool = !false; // !//!//!//!!!//!//!//!//!
 
 pub struct MachineVirtuelle {
     pub instruction: usize,
@@ -122,12 +122,15 @@ impl MachineVirtuelle {
         let mut r = self.instructions.get(0).unwrap();
         let mut instruction_move = 0;
         let mut should_instruction_move = false;
-
+        
         while r != &Chunk::EOF {
             //println!("Instruction: {:?} {:?}",r,self.var_map);
             instruction_move = 0; //let mut
             should_instruction_move = false; //let mut
                                              //println!("{:?}",self.stack);
+                                           // /  println!("Parsing instruction {:?}, stack is {:?}",r,self.stack);
+                                            // thread::sleep(Duration::from_millis(100*4*4));//500
+            //println!("{}",self.stack.len());
             match r.clone() {
                 Chunk::CLOCK=>{
                     let d = SystemTime::now().duration_since(start).expect("Le temps a reculé");//earlier//msg
@@ -340,7 +343,7 @@ impl MachineVirtuelle {
         //return self.stack.pop();
     }
     pub fn set_instruction(&mut self, index: usize, d: Chunk) {
-        //println!("{:?},{:?}",self.instructions[index],&d);
+        //println!("{:?} ->,{:?}",self.instructions[index],&d);//////
         self.instructions[index] = d;
     }
     pub fn append(&mut self, d: ValueContainer) {

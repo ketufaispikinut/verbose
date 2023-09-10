@@ -53,8 +53,9 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
 
                         vm.chunk(Chunk::JMPEND(n), i.start, i.line as usize);
                         vm.chunk(Chunk::IGNORE,i.start,i.line as usize);
-                        vm.set_instruction(//+1
-                            j.index_to, //**//- 1 + 1-1+1+1
+                        //println!("CD");
+                        vm.set_instruction(//+1//index_to//.index
+                            j.usize_from, //**//- 1 + 1-1+1+1
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
                         ); //()//-1
                         
@@ -62,8 +63,9 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     else {
                         vm.chunk(Chunk::END, i.start, i.line as usize); //chunk//IFEND//IGNORE
                         vm.chunk(Chunk::IGNORE,i.start,i.line as usize);
-                        vm.set_instruction(
-                            j.index_to, //**//- 1 + 1-1+1+1
+                       // println!("CE");
+                        vm.set_instruction(//.index
+                            j.usize_from, //**//- 1 + 1-1+1+1//_to
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
                         ); //()//-1
                     }

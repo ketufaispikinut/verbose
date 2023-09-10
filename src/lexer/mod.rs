@@ -370,6 +370,7 @@ impl Lexer {
                                     //println!("MATCH!");
                                     token = i.1.clone();
                                     advlen = sizeof_char_indices(i.0.char_indices()) - 1;
+                                    break;
                                     //i.0.len() - 1;
                                 }
                             }
