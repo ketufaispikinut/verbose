@@ -161,7 +161,7 @@ fn main() {
         } else {
         }
     } // else {////C//c//compiler seulement//\n
-    println!("Usage: verbose (fichier)\t <-- exécuter un fichier\n       verbose\t\t\t <-- REPL\nParamètres: \n       -c\t\t\t\t<-- compiler seulement\n       -d\t\t\t\t<-- activer des paramètres et drapeaux\n       -s\t\t\t\t<-- Spécifier la sortie\n       -e\t\t\t\t<-- Exécuter un programme\nParamètres reçus: {}",arglen);
+    println!("Usage: verbose (fichier)\t <-- exécuter un fichier\n       verbose\t\t\t <-- REPL\nParamètres: \n       -c\t\t\t\t<-- compiler seulement\n       -i\t\t\t\t<-- afficher les instructions avant l'exécution du programme\n       -d\t\t\t\t<-- activer des paramètres et drapeaux\n       -s\t\t\t\t<-- Spécifier la sortie\n       -e\t\t\t\t<-- Exécuter un programme\nParamètres reçus: {}",arglen);
     //s.len()
     //  }
     //   println!("Hello, world!");
