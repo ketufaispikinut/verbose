@@ -428,7 +428,7 @@ impl ValueContainer {
     }
     pub fn modulo(mut self, b: ValueContainer) -> ValueContainer {
         let a = self.i32_val();
-        let b = self.i32_val();
+        let b = b.i32_val();
         self.value = Value::INT(a % b);
         self
     }
