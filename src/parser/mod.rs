@@ -42,7 +42,13 @@ pub fn parse_rearrange(lexer: &Lexer) -> Vec<Token> {
     let mut vec_of_tokens = Vec::new(); //c
     while !&k.is_at_end() {
         while is_op(&k.peek().token) {
-            let mut c = back_to_tokens(parse(&mut k, 0), false); //
+            let n=parse(&mut k, 0);
+            if DEBUG_TREE{
+                debug_tree(&n);//&b//i
+                println!("");
+            }
+            let mut c = back_to_tokens(n, false); //
+
             vec_of_tokens.append(&mut c.0);
         }
         if !k.is_at_end() {
@@ -183,7 +189,27 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
     //println!("PARSE EXIT");
     lhs
 }
-
+pub fn debug_tree(b:&ParseResult){
+    
+    match b{
+        ParseResult::Atom(token,d)=>{
+            print!("{}",token.snippet);
+        }
+        ParseResult::Cons(tokens,vec)=>{
+            print!(" {{ ");//\
+            print!("{} -> (",tokens.snippet);//:?//:?// 
+            //pri
+            
+            for i in vec{
+                print!(" ");
+                debug_tree(i);//b
+            }
+            print!(")");
+            print!(" }} ");
+        }
+    }
+    
+}
 pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
     let mut k = Vec::new();
     let mut itype = Type::ANY;
@@ -225,6 +251,7 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
                 // let c=d.collect();
                 //k.append(c);
                 for i in d {
+                   
                     k.append(&mut back_to_tokens(i, in_if).0);
                 }
                 k.push(token);
@@ -356,6 +383,7 @@ pub fn is_bool(d: String) -> bool {
     }
 }
 
+pub const DEBUG_TREE:bool=true;
 pub fn token_supports_str(d:&Tokens)->bool{
     match d{
         Tokens::ASSIGN=>{
