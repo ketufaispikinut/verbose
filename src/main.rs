@@ -15,16 +15,16 @@ pub mod vm;
 //lazy_static!{
 //pub static ref _indepth_debug:bool=false;
 //}
-pub fn load_executable(path:&str){
+pub fn load_executable(path: &str, print_instructions: bool){
     let rts = read(path.clone().to_string()+".vbe");//_to
     if let Ok(d) = rts {
         let mut d=MachineVirtuelle::deserialize(d);//P
-        d.start();
+        d.start(print_instructions);
     } else if let Err(d) = rts {//P
         println!("Impossible de charger le programme {}\n {}", path.clone().to_string()+".vbe", d);//fichier
     }
 }
-pub fn load_file(path: &str, compile_only: bool, out_path: String) {
+pub fn load_file(path: &str, compile_only: bool, out_path: String, print_instructions: bool) {
     //&str
     let rts = read_to_string(path);
     if let Ok(d) = rts {
@@ -35,7 +35,7 @@ pub fn load_file(path: &str, compile_only: bool, out_path: String) {
         compile_to_bitcode(&k, &mut n); //tokens//vm
         if !compile_only {
             println!("\n - - - \n"); //m
-            n.start();
+            n.start(print_instructions);
         } else {
             // let path = "results.txt";
             let output = File::create(out_path.clone()+".vbe"); //path//?//mut
@@ -77,12 +77,15 @@ fn main() {
         let mut flag = false;
         let mut out_path = String::new();
         let mut specify = false;
-        let mut execute=false;
+        let mut execute = false;
+        let mut print_instuctions = false;
         for i in args {
             //println!("WAHOO");
             if i == String::from("-c") {
                 compile = true;
                 continue;
+            } else if &i == "-i" {
+                print_instuctions = true;
             } else if i == String::from("-d") {
                 flag = true;
             } else if i == String::from("-s") {
@@ -137,7 +140,7 @@ fn main() {
             }
         }
         if execute&&!str_load.is_empty(){
-            load_executable(str_load.as_str());//and_ex
+            load_executable(str_load.as_str(), print_instuctions);//and_ex
             return;
         }
         else if compile && !str_load.is_empty() {
@@ -145,11 +148,11 @@ fn main() {
             if out_path.is_empty() {
                 println!("Aucun chemin de sortie n'as été spécifié"); //fatal
             } else {
-                load_file(str_load.as_str(), compile, out_path); //path
+                load_file(str_load.as_str(), compile, out_path, print_instuctions); //path
                 return; //
             }
         } else if !str_load.is_empty() {
-            load_file(str_load.as_str(), compile, out_path);
+            load_file(str_load.as_str(), compile, out_path, print_instuctions);
             return;
         } else {
         }
