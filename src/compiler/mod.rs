@@ -137,6 +137,9 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
             DIV => {
                 vm.chunk(Chunk::DIV, i.start, i.line as usize);
             }
+            MOD => {
+                vm.chunk(Chunk::MOD, i.start, i.line as usize);
+            }
             SUB => {
                 vm.chunk(Chunk::SUB, i.start, i.line as usize);
             }

@@ -68,6 +68,7 @@ pub fn isop(t: &Tokens) -> bool {
         | Tokens::CONST
         | Tokens::CONST_STR
         | Tokens::DIV
+        | Tokens::MOD
         | Tokens::PARDRO
         | Tokens::PARGAU
         | Tokens::MUL
@@ -80,8 +81,6 @@ pub fn isop(t: &Tokens) -> bool {
         | Tokens::PRINT
         | Tokens::IF//,
         | Tokens::LOOP//,
-        | Tokens::SMALLER//,
-        | Tokens::GREATER
         => true,
         _ => false,
     }
@@ -157,6 +156,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             Tokens::SUB => '-',
             Tokens::MUL => '*',
             Tokens::DIV => '/',
+            Tokens::MOD => '%',
             Tokens::ASSIGN => '=',
             Tokens::SMALLER=>'<',
             Tokens::EQUAL => '_',
@@ -312,6 +312,7 @@ pub fn dis(dvec: &Vec<Token>) -> String {
 pub fn is_op(d: &Tokens) -> bool {
     match d {
         Tokens::DIV => true,
+        Tokens::MOD => true,
         Tokens::MUL => true,
         Tokens::ADD => true,
         Tokens::SUB => true,

@@ -87,8 +87,7 @@ impl MachineVirtuelle {
             }
         }
         println!("Pour des messages d'erreur plus en profondeur, exécutez \n\tverbose -c -d erreur=oui <fichier>");
-        let n = fatal!();
-        n
+        fatal!()
     }
 
     pub fn start(&mut self) {
@@ -224,6 +223,11 @@ impl MachineVirtuelle {
                     let a = self.pop(); //m
                     self.spawn(a.div(b)); //add
                 }
+                Chunk::MOD => {
+                    let b = self.pop();
+                    let a = self.pop();
+                    self.spawn(a.modulo(b));
+                }
                 Chunk::ADD => {
                     //DIV
                     let b = self.pop(); //self.pop()
@@ -353,6 +357,7 @@ pub enum Chunk {
     ADD,
     SUB,
     DIV,
+    MOD,
     MUL,
     SMALLER,
     GREATER,//B
@@ -419,6 +424,12 @@ impl ValueContainer {
         let a = self.i32_val(); //r//b
         let b = b.i32_val(); //: ValueContainer
         self.value = Value::INT(a / b);
+        self
+    }
+    pub fn modulo(mut self, b: ValueContainer) -> ValueContainer {
+        let a = self.i32_val();
+        let b = self.i32_val();
+        self.value = Value::INT(a % b);
         self
     }
     pub fn sub(mut self, b: ValueContainer) -> ValueContainer {

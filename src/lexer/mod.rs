@@ -71,6 +71,7 @@ pub enum Tokens {
     ADD,
     SUB,
     DIV,
+    MOD,
     MUL,
 
     //Parenth'eses
@@ -274,6 +275,9 @@ impl Lexer {
                 ' ' => {}
                 '/' => {
                     return self.make_token(Tokens::DIV); //t
+                }
+                '%' => {
+                    return self.make_token(Tokens::MOD); //t
                 }
                 '-' => {
                     return self.make_token(Tokens::SUB); //t
