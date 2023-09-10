@@ -52,6 +52,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                         //j.usize_from - 1
 
                         vm.chunk(Chunk::JMPEND(n), i.start, i.line as usize);
+                        vm.chunk(Chunk::IGNORE,i.start,i.line as usize);
                         vm.set_instruction(//+1
                             j.index_to, //**//- 1 + 1-1+1+1
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
@@ -60,6 +61,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     }
                     else {
                         vm.chunk(Chunk::END, i.start, i.line as usize); //chunk//IFEND//IGNORE
+                        vm.chunk(Chunk::IGNORE,i.start,i.line as usize);
                         vm.set_instruction(
                             j.index_to, //**//- 1 + 1-1+1+1
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
@@ -208,8 +210,8 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                         "EOF obtenu en scannant pour un \"si\" (profondeur {})",
                         depth
                     );
-                }//0//32
-                vm.chunk(Chunk::JMPIFFALSE(usize::MAX), i.start, i.line as usize); //self.instructions[index]
+                }//0//32//JMPIFFALSE(usize::MAX)
+                vm.chunk(Chunk::IGNORE, i.start, i.line as usize); //self.instructions[index]
                                                                           //if is_a_loop{}
                                                                           //println!("R!");//-1
                 backward_jmps.push(JmpBackwardRef {
@@ -231,8 +233,8 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     hashmap_vars.insert(i.snippet.clone(), var_count + 1); //+//+=1//s
                     var_count += 1;
                 } //i.snipet.clone()
-                vm.chunk(
-                    Chunk::VARIABLEREF(*hashmap_vars.get(&i.snippet).unwrap()),
+                vm.chunk(//*hashmap_vars.get(&i.snippet).unwrap()
+                    Chunk::VARIABLEREF(i.snippet.clone()),
                     i.start,
                     i.line as usize,
                 ); //_
@@ -244,7 +246,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     var_count += 1;
                 } //i.snipet.clone()///.clone()//_
                 vm.chunk(
-                    Chunk::VARIABLEASS(*hashmap_vars.get(&i.snippet).unwrap()),
+                    Chunk::VARIABLEASS(i.snippet.clone()),//*hashmap_vars.get(&i.snippet).unwrap()
                     i.start,
                     i.line as usize,
                 );

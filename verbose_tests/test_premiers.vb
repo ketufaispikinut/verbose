@@ -17,7 +17,8 @@ Tant que oui alors
       EstPremier vaut non
     Fin
   Fin
+  Afficher "EstPremier vaut "+EstPremier
   Si EstPremier alors
-    Afficher "Nombre premier : "+A
+    Afficher "Nombre premier : ("+A+")"
   Fin
 Fin

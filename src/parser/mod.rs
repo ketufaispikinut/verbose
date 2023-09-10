@@ -253,11 +253,13 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
                     Type::BOOL => {
                         if itype == Type::STR && token.token == Tokens::ADD { //}
                              //  itype=Type::BOOL;
+
                         } else if token.token != Tokens::EQUAL
                             && token.token != Tokens::IF
                             && token.token != Tokens::LOOP
                             && token.token != Tokens::ASSIGN
                         {
+                            
                             //u texte// (sauf l'addition)//D
                            // println!("{:?}",token.token);
                             error_parser(token.start, token.line as usize,"Il est impossible de faire des opérations mathématiques sur des oui ou des non".to_string());
@@ -265,7 +267,7 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
                     }
                     Type::NUM => {
                         if itype != Type::BOOL {
-                            if itype == Type::STR && token.token != Tokens::ADD {
+                            if itype == Type::STR && token.token != Tokens::ADD&&token.token!=Tokens::EQUAL&&token.token!=Tokens::ASSIGN {
                                 error_parser(token.start, token.line as usize, "Il est impossible de faire des opérations mathématiques sur du texte (sauf l'addition)".to_string());
                             }
                             // !
@@ -278,7 +280,7 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
                     }
                     Type::STR => {
                         //BOOL
-                        if is_op(&token.token) && token.token != Tokens::ADD {
+                        if is_op(&token.token) && token.token != Tokens::ADD&& !token_supports_str(&token.token) {//bool//D
                             error_parser(token.start, token.line as usize, "Il est impossible de faire des opérations mathématiques sur du texte (sauf l'addition)".to_string());
                         } else {
                             itype = Type::STR;
@@ -351,5 +353,26 @@ pub fn is_bool(d: String) -> bool {
         "Oui" | "oui" => true,
         "Non" | "non" => true,
         _ => false,
+    }
+}
+
+pub fn token_supports_str(d:&Tokens)->bool{
+    match d{
+        Tokens::ASSIGN=>{
+            true
+        }
+        Tokens::EQUAL=>{
+            true
+        }
+        Tokens::ADD=>{
+            true
+        }
+        Tokens::PRINT=>{
+            true
+        }
+        _=>{
+            //println!("{:?}",d);
+            false
+        }
     }
 }

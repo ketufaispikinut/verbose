@@ -18,8 +18,8 @@ pub struct MachineVirtuelle {
     pub stack: Vec<ValueContainer>,
     pub text: Option<String>,
     pub depth: u32, //String//usize
-    pub var_map: Vec<HashMap<i32, ValueContainer>>,
-    pub time:u32,
+    pub var_map: Vec<HashMap<String, ValueContainer>>,
+    pub time:u32,//i32
 }
 
 impl MachineVirtuelle {
@@ -103,11 +103,8 @@ impl MachineVirtuelle {
         if VM_DEBUG_LAYER {
             let mut n = 0;
             for i in &self.instructions {
-<<<<<<< Updated upstream
-                println!("{}\t {:?}", n, i);
-=======
+
                 println!("{}\t {:?} \tLigne: {}", n, i,self.instructions_origins.get(n).unwrap().1+1);// //0
->>>>>>> Stashed changes
                 n += 1;
             }
         }
@@ -127,6 +124,7 @@ impl MachineVirtuelle {
         let mut should_instruction_move = false;
 
         while r != &Chunk::EOF {
+            //println!("Instruction: {:?} {:?}",r,self.var_map);
             instruction_move = 0; //let mut
             should_instruction_move = false; //let mut
                                              //println!("{:?}",self.stack);
@@ -165,18 +163,19 @@ impl MachineVirtuelle {
                 }
                 Chunk::VARIABLEASS(dddd) => {
                     //string
-                    self.spawn(ValueContainer::new_num(dddd, 0)); // { value: (), index: () }//value, index
+                    self.spawn(ValueContainer::new_string(dddd, 0)); // { value: (), index: () }//value, index
                 }
                 Chunk::GREATER => {
                     let a=self.pop();//>//<//c//c
                     let b=self.pop();
-                    
+                    //println!("GREATER {}>{}",a.i32_val(),b.i32_val());
                     self.spawn(ValueContainer::new_bool(b.i32_val() > a.i32_val(), 0));//d
                 }//()
                 Chunk::SMALLER => {//GREATER
                     let a=self.pop();//>//<//c//c
                     let b=self.pop();
                     //>
+                    //println!("SMALLER {}>{}",a.i32_val(),b.i32_val());
                     self.spawn(ValueContainer::new_bool(b.i32_val() < a.i32_val(), 0));//d
                 }//()
                 Chunk::ASSIGN => {
@@ -188,24 +187,24 @@ impl MachineVirtuelle {
                     let index = self.pop();
                     
                     //println!("{}",index.str());//value
-                    if let Value::INT(d) = &index.value { //D
-                         //STRING
+                    if let Value::STRING(_d) = &index.value { //D
+                         //STRING//INT
                     } else {
                         self.error("Erreur! Le nom de la variable est manquante!".to_string());
                     }
                     let mut has_assigned = false;
                     for i in &mut self.var_map {
-                        if i.contains_key(&(index.i32_val())) {
+                        if i.contains_key(&(index.str())) {
                             //println!("FIRST");
                             //k//str()
                             //i[&index.str()]=value;
                             {
-                            let c = i.get(&index.i32_val());
+                            let c = i.get(&index.str());
                             if !c.unwrap().same_type_as(&value){//val
                                 self.error(format!("Erreur! La variable {} n'as pas le même type que la variable qu'on lui assigne!",index.i32_val()));//_
                             }
                         }
-                            i.insert(index.i32_val(), value.clone()); //&//str()
+                            i.insert(index.str(), value.clone()); //&//str()
                             has_assigned = true;
                             break;
                         }
@@ -218,7 +217,7 @@ impl MachineVirtuelle {
                         if let Some(d) = d {
                             // d[&index.str()]=value;
                             // println!("{} {}",index.str(),m);
-                            d.insert(index.i32_val(), value); //&//i//.str()
+                            d.insert(index.str(), value); //&//i//.str()
                             has_assigned = true;
                             //break;
                         }
@@ -270,7 +269,7 @@ impl MachineVirtuelle {
                     instruction_move = b;
                 }
                 Chunk::JMPIFFALSE(b) => {
-                    println!("{:?}",self.stack);
+                    //println!("{:?}",self.stack);
                     //println!("DEEP");
                     self.var_map.push(HashMap::new()); // println!("R");
                     self.depth += 1;
@@ -387,9 +386,9 @@ pub enum Chunk {
     EQUAL,
     EOF,
     PRINT,            //String//usize//usize
-    VARIABLEREF(i32), //ValueContainer//_//String
-    VARIABLEASS(i32), //_ASSIGN
-    ASSIGN,
+    VARIABLEREF(String), //ValueContainer//_//String
+    VARIABLEASS(String), //_ASSIGN
+    ASSIGN,//i32//i32
     JMPIFFALSE(usize), //u16
     JMPEND(usize),     //_//_
     JMP(usize),        //4

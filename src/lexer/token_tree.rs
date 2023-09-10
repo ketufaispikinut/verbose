@@ -22,6 +22,7 @@ impl TokenTree {
             vec![
                 (String::from("alors"), Tokens::BEGIN),
                 (String::from("afficher"), Tokens::PRINT),
+                (String::from("affiche"),Tokens::PRINT),//)
                 (String::from("avec"), Tokens::PARAM), //fficher//PRINT
             ],
         );
