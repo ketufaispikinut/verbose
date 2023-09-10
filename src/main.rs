@@ -5,7 +5,7 @@ use lexer::lex;
 use parser::parse_rearrange;
 use vm::MachineVirtuelle;
 //_to_instructions
-use std::fs::{read_to_string, read};
+use std::fs::{read, read_to_string};
 use std::io::Write;
 pub mod compiler;
 pub mod lexer;
@@ -15,13 +15,18 @@ pub mod vm;
 //lazy_static!{
 //pub static ref _indepth_debug:bool=false;
 //}
-pub fn load_executable(path: &str, print_instructions: bool){
-    let rts = read(path.clone().to_string()+".vbe");//_to
+pub fn load_executable(path: &str, print_instructions: bool) {
+    let rts = read(path.clone().to_string() + ".vbe"); //_to
     if let Ok(d) = rts {
-        let mut d=MachineVirtuelle::deserialize(d);//P
+        let mut d = MachineVirtuelle::deserialize(d); //P
         d.start(print_instructions);
-    } else if let Err(d) = rts {//P
-        println!("Impossible de charger le programme {}\n {}", path.clone().to_string()+".vbe", d);//fichier
+    } else if let Err(d) = rts {
+        //P
+        println!(
+            "Impossible de charger le programme {}\n {}",
+            path.clone().to_string() + ".vbe",
+            d
+        ); //fichier
     }
 }
 pub fn load_file(path: &str, compile_only: bool, out_path: String, print_instructions: bool) {
@@ -38,18 +43,20 @@ pub fn load_file(path: &str, compile_only: bool, out_path: String, print_instruc
             n.start(print_instructions);
         } else {
             // let path = "results.txt";
-            let output = File::create(out_path.clone()+".vbe"); //path//?//mut
+            let output = File::create(out_path.clone() + ".vbe"); //path//?//mut
             if let Ok(mut output) = output {
                 //o
                 let line = n.serialize(); //"hello";
-                let c=write!(output, "{}", line);
-                if let Err(err)=c{
-                    println!("Erreur lors de l'écriture du fichier \n{}",err);
+                let c = write!(output, "{}", line);
+                if let Err(err) = c {
+                    println!("Erreur lors de l'écriture du fichier \n{}", err);
+                } else {
+                    println!(
+                        "Fichier {} compilé vers {} avec succès!",
+                        path,
+                        out_path + ".vbe"
+                    );
                 }
-                else{
-                    println!("Fichier {} compilé vers {} avec succès!",path,out_path+".vbe");
-                }
-
             } else if let Err(err) = output {
                 //
                 println!("Erreur lors de l'écriture du fichier \n{}", err);
@@ -68,8 +75,8 @@ fn main() {
     //println!("{:?}",args);
     let arglen = args.len();
     //if args.len() == 0 {
-        //println!("Mode REPL...");
-    //} else 
+    //println!("Mode REPL...");
+    //} else
     if args.len() > 0 {
         //(args.len() == 1)
         let mut str_load = String::from("");
@@ -90,10 +97,9 @@ fn main() {
                 flag = true;
             } else if i == String::from("-s") {
                 specify = true;
-            } else if i==String::from("-e"){
-                execute=true;
-            } 
-            else if specify {
+            } else if i == String::from("-e") {
+                execute = true;
+            } else if specify {
                 out_path = i;
                 specify = false;
             } else if flag && i.contains("=") {
@@ -113,10 +119,9 @@ fn main() {
                             match b.to_lowercase() {
                                 _ => {
                                     println!("Valuer inconnue pour le paramètre 'erreur'")
-                                }
-                                //String::from("oui")=>{
-                                //
-                                //}//
+                                } //String::from("oui")=>{
+                                  //
+                                  //}//
                             }
                         }
                         _ => {
@@ -139,11 +144,10 @@ fn main() {
                 //continue;
             }
         }
-        if execute&&!str_load.is_empty(){
-            load_executable(str_load.as_str(), print_instuctions);//and_ex
+        if execute && !str_load.is_empty() {
+            load_executable(str_load.as_str(), print_instuctions); //and_ex
             return;
-        }
-        else if compile && !str_load.is_empty() {
+        } else if compile && !str_load.is_empty() {
             //i
             if out_path.is_empty() {
                 println!("Aucun chemin de sortie n'as été spécifié"); //fatal
@@ -156,7 +160,7 @@ fn main() {
             return;
         } else {
         }
-    } // else {////C//c//compiler seulement//\n 
+    } // else {////C//c//compiler seulement//\n
     println!("Usage: verbose (fichier)\t <-- exécuter un fichier\n       verbose\t\t\t <-- REPL\nParamètres: \n       -c\t\t\t\t<-- compiler seulement\n       -d\t\t\t\t<-- activer des paramètres et drapeaux\n       -s\t\t\t\t<-- Spécifier la sortie\n       -e\t\t\t\t<-- Exécuter un programme\nParamètres reçus: {}",arglen);
     //s.len()
     //  }

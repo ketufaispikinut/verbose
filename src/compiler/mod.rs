@@ -43,28 +43,29 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 if j.index_to == n {
                     //println!("{:?}",i.token);//16
 
-                    
-                                                                    //println!("ENDME0");
-                    
+                    //println!("ENDME0");
+
                     if j.is_loop {
                         //()
-                        let n = if_index.pop().expect(format!("Ceci est une erreur du compileur! \n {:?}",&tokens).as_str());//msg//e
-                        //j.usize_from - 1
+                        let n = if_index.pop().expect(
+                            format!("Ceci est une erreur du compileur! \n {:?}", &tokens).as_str(),
+                        ); //msg//e
+                           //j.usize_from - 1
 
                         vm.chunk(Chunk::JMPEND(n), i.start, i.line as usize);
-                        vm.chunk(Chunk::IGNORE,i.start,i.line as usize);
+                        vm.chunk(Chunk::IGNORE, i.start, i.line as usize);
                         //println!("CD");
-                        vm.set_instruction(//+1//index_to//.index
+                        vm.set_instruction(
+                            //+1//index_to//.index
                             j.usize_from, //**//- 1 + 1-1+1+1
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
                         ); //()//-1
-                        
-                    }
-                    else {
+                    } else {
                         vm.chunk(Chunk::END, i.start, i.line as usize); //chunk//IFEND//IGNORE
-                        vm.chunk(Chunk::IGNORE,i.start,i.line as usize);
-                       // println!("CE");
-                        vm.set_instruction(//.index
+                        vm.chunk(Chunk::IGNORE, i.start, i.line as usize);
+                        // println!("CE");
+                        vm.set_instruction(
+                            //.index
                             j.usize_from, //**//- 1 + 1-1+1+1//_to
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
                         ); //()//-1
@@ -91,16 +92,17 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
         }
         match i.token {
             CLOCK => {
-                vm.chunk(Chunk::CLOCK, i.start, i.line as usize);//LOOPl
+                vm.chunk(Chunk::CLOCK, i.start, i.line as usize); //LOOPl
             }
-            GREATER => {//SMALLER//SMALLER
+            GREATER => {
+                //SMALLER//SMALLER
                 vm.chunk(Chunk::GREATER, i.start, i.line as usize);
             }
             SMALLER => {
                 vm.chunk(Chunk::SMALLER, i.start, i.line as usize);
             }
-            TOKENS_IF_BEFORE=>{
-                if_index.push(vm.instructions.len());//l//0
+            TOKENS_IF_BEFORE => {
+                if_index.push(vm.instructions.len()); //l//0
                 vm.chunk(Chunk::IGNORE, i.start, i.line as usize);
             }
             CONST => {
@@ -212,15 +214,15 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                         "EOF obtenu en scannant pour un \"si\" (profondeur {})",
                         depth
                     );
-                }//0//32//JMPIFFALSE(usize::MAX)
+                } //0//32//JMPIFFALSE(usize::MAX)
                 vm.chunk(Chunk::IGNORE, i.start, i.line as usize); //self.instructions[index]
-                                                                          //if is_a_loop{}
-                                                                          //println!("R!");//-1
+                                                                   //if is_a_loop{}
+                                                                   //println!("R!");//-1
                 backward_jmps.push(JmpBackwardRef {
                     index: n as usize,
-                    index_to: n as usize + k,// + 1 - 1
+                    index_to: n as usize + k, // + 1 - 1
                     is_loop: is_a_loop,
-                    usize_from: vm.instructions.len()- 1 ,//
+                    usize_from: vm.instructions.len() - 1, //
                 }); //()
                     //for i in
                     //skip=true;
@@ -235,7 +237,8 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     hashmap_vars.insert(i.snippet.clone(), var_count + 1); //+//+=1//s
                     var_count += 1;
                 } //i.snipet.clone()
-                vm.chunk(//*hashmap_vars.get(&i.snippet).unwrap()
+                vm.chunk(
+                    //*hashmap_vars.get(&i.snippet).unwrap()
                     Chunk::VARIABLEREF(i.snippet.clone()),
                     i.start,
                     i.line as usize,
@@ -248,7 +251,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     var_count += 1;
                 } //i.snipet.clone()///.clone()//_
                 vm.chunk(
-                    Chunk::VARIABLEASS(i.snippet.clone()),//*hashmap_vars.get(&i.snippet).unwrap()
+                    Chunk::VARIABLEASS(i.snippet.clone()), //*hashmap_vars.get(&i.snippet).unwrap()
                     i.start,
                     i.line as usize,
                 );

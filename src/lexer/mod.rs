@@ -57,7 +57,7 @@ pub enum Tokens {
     VARIABLE,
     VARIABLE_ASSIGN,
     CLOCK,
-   
+
     //Control
     IF,
     BEGIN,
@@ -303,9 +303,9 @@ impl Lexer {
                 }
                 '\"' => {
                     let mut string = String::new(); //self.peek(len)
-                                                 //self.advance();
-                                                 //self.advance();
-                                                 //self.advance();
+                                                    //self.advance();
+                                                    //self.advance();
+                                                    //self.advance();
                     while !self.peek(1).starts_with("\"") {
                         let n = self.peek(2); //len//1
                         if n.starts_with("\\") {
@@ -352,8 +352,7 @@ impl Lexer {
                     } else {
                         let mut advlen = 0;
                         let mut token = Tokens::EOF;
-                        if let Some(d) = self.tokentree.map_firstchar.get(&t.to_ascii_lowercase())
-                        {
+                        if let Some(d) = self.tokentree.map_firstchar.get(&t.to_ascii_lowercase()) {
                             //println!("damn!");
                             for i in d {
                                 //.size_hint().1.unwrap()
@@ -533,7 +532,7 @@ pub fn lex(string: String) -> Lexer {
 pub fn is_digit(chr: char) -> bool {
     //println!("{}")
     return chr.is_digit(10); //radix
-                              //return char>='0'&&char<='9';//""
+                             //return char>='0'&&char<='9';//""
 }
 
 /*

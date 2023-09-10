@@ -42,9 +42,9 @@ pub fn parse_rearrange(lexer: &Lexer) -> Vec<Token> {
     let mut vec_of_tokens = Vec::new(); //c
     while !&k.is_at_end() {
         while is_op(&k.peek().token) {
-            let n=parse(&mut k, 0);
-            if DEBUG_TREE{
-                debug_tree(&n);//&b//i
+            let n = parse(&mut k, 0);
+            if DEBUG_TREE {
+                debug_tree(&n); //&b//i
                 println!("");
             }
             let mut c = back_to_tokens(n, false); //
@@ -84,7 +84,7 @@ pub fn is_op(t: &Tokens) -> bool {
         | Tokens::VARIABLE
         | Tokens::GREATER
         | Tokens::SMALLER
-        | Tokens::EQUAL 
+        | Tokens::EQUAL
         | Tokens::PRINT
         | Tokens::IF//,
         | Tokens::LOOP//,
@@ -123,7 +123,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
         ),
         Tokens::CONST_STR => ParseResult::Atom(f, Type::STR),
         Tokens::VARIABLE => ParseResult::Atom(f, Type::ANY),
-        Tokens::CLOCK=>ParseResult::Atom(f,Type::NUM),
+        Tokens::CLOCK => ParseResult::Atom(f, Type::NUM),
         Tokens::LOOP => {
             let ((), r_bp) = prefix_binding_power('w').unwrap(); //p
             let rhs = parse(v, r_bp); //expr_bp
@@ -161,16 +161,16 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
         // println!("NEXT");//peek//next
         let d = v.peek();
         let op = match d.token {
-            Tokens::EOF     => break,
-            Tokens::ADD     => '+',
-            Tokens::SUB     => '-',
-            Tokens::MUL     => '*',
-            Tokens::DIV     => '/',
-            Tokens::MOD     => '%',
-            Tokens::ASSIGN  => '=',
-            Tokens::SMALLER =>'<',
-            Tokens::EQUAL   => '_',
-            Tokens::GREATER =>'>',//<
+            Tokens::EOF => break,
+            Tokens::ADD => '+',
+            Tokens::SUB => '-',
+            Tokens::MUL => '*',
+            Tokens::DIV => '/',
+            Tokens::MOD => '%',
+            Tokens::ASSIGN => '=',
+            Tokens::SMALLER => '<',
+            Tokens::EQUAL => '_',
+            Tokens::GREATER => '>', //<
             //Tokens::PRINT=>'p',
             _t => return lhs, //fatal!("o non (op): {:?}", t), //bad token
         };
@@ -189,28 +189,26 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
     //println!("PARSE EXIT");
     lhs
 }
-pub fn debug_tree(b:&ParseResult){
-    
-    match b{
-        ParseResult::Atom(token,d)=>{
-            print!("{}",token.snippet);
+pub fn debug_tree(b: &ParseResult) {
+    match b {
+        ParseResult::Atom(token, d) => {
+            print!("{}", token.snippet);
         }
-        ParseResult::Cons(tokens,vec)=>{
-            print!(" {{ ");//\
-            print!("{} -> (",tokens.snippet);//:?//:?// 
-            //pri
-            
-            for i in vec{
+        ParseResult::Cons(tokens, vec) => {
+            print!(" {{ "); //\
+            print!("{} -> (", tokens.snippet); //:?//:?//
+                                               //pri
+
+            for i in vec {
                 print!(" ");
-                debug_tree(i);//b
+                debug_tree(i); //b
             }
             print!(")");
             print!(" }} ");
         }
     }
-    
 }
-pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
+pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
     let mut k = Vec::new();
     let mut itype = Type::ANY;
 
@@ -251,21 +249,22 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
                 // let c=d.collect();
                 //k.append(c);
                 for i in d {
-                   
                     k.append(&mut back_to_tokens(i, in_if).0);
                 }
                 k.push(token);
                 return (k, Type::ANY); //itype
             }
-            if token.token==Tokens::LOOP{//IF
-                let mut n=token.clone();
-                n.token=Tokens::TOKENS_IF_BEFORE;
+            if token.token == Tokens::LOOP {
+                //IF
+                let mut n = token.clone();
+                n.token = Tokens::TOKENS_IF_BEFORE;
                 k.push(n);
-                let d = vec.into_iter();//mut 
-                //d.next();
-                // let c=d.collect();
-                //k.append(c);
-                for i in d {//in_if
+                let d = vec.into_iter(); //mut
+                                         //d.next();
+                                         // let c=d.collect();
+                                         //k.append(c);
+                for i in d {
+                    //in_if
                     k.append(&mut back_to_tokens(i, true).0);
                 }
                 k.push(token);
@@ -274,27 +273,32 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
             //V//T
             for i in vec {
                 //V//in_if
-                let t = &mut back_to_tokens(i,token.token == Tokens::IF || token.token == Tokens::LOOP || in_if); //.0
+                let t = &mut back_to_tokens(
+                    i,
+                    token.token == Tokens::IF || token.token == Tokens::LOOP || in_if,
+                ); //.0
                 match t.1 {
                     //itype
                     Type::BOOL => {
                         if itype == Type::STR && token.token == Tokens::ADD { //}
                              //  itype=Type::BOOL;
-
                         } else if token.token != Tokens::EQUAL
                             && token.token != Tokens::IF
                             && token.token != Tokens::LOOP
                             && token.token != Tokens::ASSIGN
                         {
-                            
                             //u texte// (sauf l'addition)//D
-                           // println!("{:?}",token.token);
+                            // println!("{:?}",token.token);
                             error_parser(token.start, token.line as usize,"Il est impossible de faire des opérations mathématiques sur des oui ou des non".to_string());
                         }
                     }
                     Type::NUM => {
                         if itype != Type::BOOL {
-                            if itype == Type::STR && token.token != Tokens::ADD&&token.token!=Tokens::EQUAL&&token.token!=Tokens::ASSIGN {
+                            if itype == Type::STR
+                                && token.token != Tokens::ADD
+                                && token.token != Tokens::EQUAL
+                                && token.token != Tokens::ASSIGN
+                            {
                                 error_parser(token.start, token.line as usize, "Il est impossible de faire des opérations mathématiques sur du texte (sauf l'addition)".to_string());
                             }
                             // !
@@ -307,7 +311,11 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
                     }
                     Type::STR => {
                         //BOOL
-                        if is_op(&token.token) && token.token != Tokens::ADD&& !token_supports_str(&token.token) {//bool//D
+                        if is_op(&token.token)
+                            && token.token != Tokens::ADD
+                            && !token_supports_str(&token.token)
+                        {
+                            //bool//D
                             error_parser(token.start, token.line as usize, "Il est impossible de faire des opérations mathématiques sur du texte (sauf l'addition)".to_string());
                         } else {
                             itype = Type::STR;
@@ -321,7 +329,7 @@ pub fn back_to_tokens(b: ParseResult, in_if:bool) -> (Vec<Token>, Type) {
             k.push(token); //T
         }
     }
-    if &k.clone().into_iter().last().unwrap().token == &Tokens::IF{
+    if &k.clone().into_iter().last().unwrap().token == &Tokens::IF {
         //let mut n=0;
         for i in &mut k {
             if i.token == Tokens::ASSIGN {
@@ -383,22 +391,14 @@ pub fn is_bool(d: String) -> bool {
     }
 }
 
-pub const DEBUG_TREE:bool=true;
-pub fn token_supports_str(d:&Tokens)->bool{
-    match d{
-        Tokens::ASSIGN=>{
-            true
-        }
-        Tokens::EQUAL=>{
-            true
-        }
-        Tokens::ADD=>{
-            true
-        }
-        Tokens::PRINT=>{
-            true
-        }
-        _=>{
+pub const DEBUG_TREE: bool = true;
+pub fn token_supports_str(d: &Tokens) -> bool {
+    match d {
+        Tokens::ASSIGN => true,
+        Tokens::EQUAL => true,
+        Tokens::ADD => true,
+        Tokens::PRINT => true,
+        _ => {
             //println!("{:?}",d);
             false
         }

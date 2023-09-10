@@ -20,13 +20,19 @@ pub fn print_instructions(instructions: &[Chunk]) {
         match instruction {
             Chunk::CLOCK => simple_instruction!("clock"),
             Chunk::CONST(value) => {
-                eprintln!("{}push{} {}{}", INSTRUCTION_COLOR, RESET, &match value.value {
-                    Value::BOOL(v) => format!("{}{}", BOOL, v),
-                    Value::INT(v) => format!("{}{}", INT, v),
-                    Value::STRING(ref v) => format!("{}\"{}\"", STR, v),
-                    Value::FLOAT(v) => format!("{}{}", FLOAT, v),
-                }, RESET)
-            },
+                eprintln!(
+                    "{}push{} {}{}",
+                    INSTRUCTION_COLOR,
+                    RESET,
+                    &match value.value {
+                        Value::BOOL(v) => format!("{}{}", BOOL, v),
+                        Value::INT(v) => format!("{}{}", INT, v),
+                        Value::STRING(ref v) => format!("{}\"{}\"", STR, v),
+                        Value::FLOAT(v) => format!("{}{}", FLOAT, v),
+                    },
+                    RESET
+                )
+            }
             Chunk::ADD => simple_instruction!("add"),
             Chunk::SUB => simple_instruction!("sub"),
             Chunk::DIV => simple_instruction!("div"),
@@ -40,7 +46,9 @@ pub fn print_instructions(instructions: &[Chunk]) {
             Chunk::VARIABLEREF(ref s) => eprintln!("{}read{} {}", INSTRUCTION_COLOR, RESET, s),
             Chunk::VARIABLEASS(ref s) => eprintln!("{}push{} {}", INSTRUCTION_COLOR, RESET, s),
             Chunk::ASSIGN => simple_instruction!("assign"),
-            Chunk::JMPIFFALSE(index) => eprintln!("{}jmp_if_false{} {}", INSTRUCTION_COLOR, RESET, index),
+            Chunk::JMPIFFALSE(index) => {
+                eprintln!("{}jmp_if_false{} {}", INSTRUCTION_COLOR, RESET, index)
+            }
             Chunk::JMPEND(index) => eprintln!("{}jmp_end{} {}", INSTRUCTION_COLOR, RESET, index),
             Chunk::JMP(index) => eprintln!("{}jmp{} {}", INSTRUCTION_COLOR, RESET, index),
             Chunk::END => simple_instruction!("end"),
