@@ -24,12 +24,12 @@ pub fn print_instructions(instructions: &[Chunk]) {
                     "{}push{} {}{}",
                     INSTRUCTION_COLOR,
                     RESET,
-                    &match &value.value {
+                    &match value.value {
                         Value::BOOL(v) => format!("{}{}", BOOL, v),
                         Value::INT(v) => format!("{}{}", INT, v),
                         Value::STRING(ref v) => format!("{}\"{}\"", STR, v),
                         Value::FLOAT(v) => format!("{}{}", FLOAT, v),
-                        Value::ARRAY(_d) => format!("{}{}", RESET, "valeur mystère de l'array"), //.//d//d
+                        Value::ARRAY(ref _v) => format!("{}{}", RESET, "valeur mystère de l'array"), //.//d//d
                         Value::MARKER => format!("{}", RESET),
                     },
                     RESET

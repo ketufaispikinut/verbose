@@ -20,6 +20,6 @@ fin
 
 si 1 est plus grand que 2 alors
   afficher "1 > 2"
-sinon si oui alors // attention, il n'y a pas de support réel pour sinon-si. il faut mettre 2 'fin' à la fin pour que ça marche. // Ouah bravo olie
+sinon si oui alors // attention, il n'y a pas de support réel pour sinon-si. il faut mettre 2 'fin' à la fin pour que ça marche.
   afficher "ok"
 fin fin
