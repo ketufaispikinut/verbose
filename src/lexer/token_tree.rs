@@ -14,7 +14,7 @@ impl TokenTree {
         d.map_firstchar
             .insert('v', vec![(String::from("vaut"), Tokens::ASSIGN)]);
         d.map_firstchar
-            .insert('s', vec![(String::from("si"), Tokens::IF)]);
+            .insert('s', vec![(String::from("sinon"), Tokens::ELSE), (String::from("si"), Tokens::IF)]);
 
         d.map_firstchar.insert(
             //é

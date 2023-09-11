@@ -57,6 +57,7 @@ pub enum Tokens {
     VARIABLE,
     VARIABLE_ASSIGN,
     CLOCK,
+    ELSE,
 
     //Control
     IF,
