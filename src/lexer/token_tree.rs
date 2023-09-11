@@ -13,8 +13,13 @@ impl TokenTree {
         };
         d.map_firstchar
             .insert('v', vec![(String::from("vaut"), Tokens::ASSIGN)]);
-        d.map_firstchar
-            .insert('s', vec![(String::from("sinon"), Tokens::ELSE), (String::from("si"), Tokens::IF)]);
+        d.map_firstchar.insert(
+            's',
+            vec![
+                (String::from("sinon"), Tokens::ELSE),
+                (String::from("si"), Tokens::IF),
+            ],
+        );
 
         d.map_firstchar.insert(
             //é
@@ -32,9 +37,15 @@ impl TokenTree {
             'e',
             vec![
                 (String::from("est égal à"), Tokens::EQUAL),
-                (String::from("est plus grand que ou égal à"), Tokens::GREATER_EQ), //égal à//EQUAL
+                (
+                    String::from("est plus grand que ou égal à"),
+                    Tokens::GREATER_EQ,
+                ), //égal à//EQUAL
                 (String::from("est plus grand que"), Tokens::GREATER), //égal à//EQUAL
-                (String::from("est plus petit que ou égal à"), Tokens::SMALLER_EQ), //égal à//EQUAL
+                (
+                    String::from("est plus petit que ou égal à"),
+                    Tokens::SMALLER_EQ,
+                ), //égal à//EQUAL
                 (String::from("est plus petit que"), Tokens::SMALLER), //égal à//EQUAL//grand//GREATER
             ],
         );

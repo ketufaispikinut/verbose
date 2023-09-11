@@ -16,6 +16,7 @@ pub struct JmpBackwardRef {
     index_to: usize,
     is_loop: bool,
     usize_from: usize,
+    push_bool: bool,
 }
 
 pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
@@ -69,6 +70,15 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                             j.usize_from, //**//- 1 + 1-1+1+1//_to
                             Chunk::JMPIFFALSE(vm.instructions.len() as usize),
                         ); //()//-1
+                        if j.push_bool {
+                            vm.set_instruction(
+                                j.usize_from + 1,
+                                Chunk::CONST(ValueContainer {
+                                    value: crate::vm::Value::BOOL(false),
+                                    index: 0,
+                                }),
+                            )
+                        }
                     }
                     vec.push(m);
                     break;
@@ -179,6 +189,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 let mut k = 0 + 1; //()
                 let mut depth = 1 - 1 + 1;
                 let mut tok = tokens.clone().into_iter();
+                let mut has_else = false;
                 tok.nth(n + k - 1); //
                 let _d = tok.next();
                 //    if let Some(k)=d{
@@ -195,6 +206,13 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                             Tokens::END => {
                                 //  println!("END");
                                 depth -= 1;
+                            }
+                            Tokens::ELSE if !is_a_loop => {
+                                println!("*else*");
+                                if depth == 1 {
+                                    depth = 0;
+                                    has_else = true
+                                }
                             }
                             Tokens::LOOP => {
                                 depth += 1;
@@ -224,11 +242,13 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 vm.chunk(Chunk::IGNORE, i.start, i.line as usize); //self.instructions[index]
                                                                    //if is_a_loop{}
                                                                    //println!("R!");//-1
+                vm.chunk(Chunk::IGNORE, i.start, i.line as usize);
                 backward_jmps.push(JmpBackwardRef {
                     index: n as usize,
                     index_to: n as usize + k, // + 1 - 1
                     is_loop: is_a_loop,
-                    usize_from: vm.instructions.len() - 1, //
+                    usize_from: vm.instructions.len() - 2, //
+                    push_bool: has_else,
                 }); //()
                     //for i in
                     //skip=true;
@@ -236,6 +256,66 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
             END => {
                 // println!("ENDME");
                 //vm.chunk(Chunk::END,i.start,i.line as usize);
+            }
+            ELSE => {
+                let mut k = 1;
+                let mut depth = 1;
+                let mut tok = tokens.clone().into_iter();
+                tok.nth(n + k - 1);
+                let _d = tok.next();
+                'd: while depth > 0 {
+                    if let Some(d) = tok.next() {
+                        //n
+                        match d.token {
+                            Tokens::END => {
+                                //  println!("END");
+                                depth -= 1;
+                            }
+                            Tokens::LOOP => {
+                                depth += 1;
+                            }
+                            Tokens::IF => {
+                                // println!("WE NEED TO GO DEEPER!");
+                                depth += 1;
+                            }
+                            Tokens::BEGIN => {
+                                //println!("BEG");
+                            }
+                            _t => {
+                                // println!("{:?}",_t);
+                            }
+                        }
+                    } else {
+                        break 'd;
+                    }
+                    k += 1;
+                }
+                if depth > 0 {
+                    fatal!(
+                        "EOF obtenu en scannant pour un \"else\" (profondeur {})",
+                        depth
+                    );
+                } //0//32//JMPIFFALSE(usize::MAX)
+                vm.chunk(
+                    Chunk::CONST(ValueContainer {
+                        value: crate::vm::Value::BOOL(true),
+                        index: 0,
+                    }),
+                    i.start,
+                    i.line as usize,
+                );
+                vm.chunk(Chunk::IGNORE, i.start, i.line as usize); //self.instructions[index]
+                                                                   //if is_a_loop{}
+                                                                   //println!("R!");//-1
+                backward_jmps.push(JmpBackwardRef {
+                    index: n as usize,
+                    index_to: n as usize + k, // + 1 - 1
+                    is_loop: false,
+                    usize_from: vm.instructions.len() - 1, //
+                    push_bool: false,
+                }); //()
+                    //for i in
+                    //skip=true;
             }
             VARIABLE => {
                 if !hashmap_vars.contains_key(&i.snippet) {
