@@ -24,11 +24,13 @@ pub fn print_instructions(instructions: &[Chunk]) {
                     "{}push{} {}{}",
                     INSTRUCTION_COLOR,
                     RESET,
-                    &match value.value {
+                    &match &value.value {
                         Value::BOOL(v) => format!("{}{}", BOOL, v),
                         Value::INT(v) => format!("{}{}", INT, v),
                         Value::STRING(ref v) => format!("{}\"{}\"", STR, v),
                         Value::FLOAT(v) => format!("{}{}", FLOAT, v),
+                        Value::ARRAY(_d) => format!("{}{}", RESET, "valeur mystère de l'array"), //.//d//d
+                        Value::MARKER => format!("{}", RESET),
                     },
                     RESET
                 )
@@ -55,6 +57,8 @@ pub fn print_instructions(instructions: &[Chunk]) {
             Chunk::JMP(index) => eprintln!("{}jmp{} {}", INSTRUCTION_COLOR, RESET, index),
             Chunk::END => simple_instruction!("end"),
             Chunk::IGNORE => simple_instruction!(""),
+            Chunk::ARRAY_BEGIN => simple_instruction!("array_begins"),
+            Chunk::ARRAY_END => simple_instruction!("array_ends"),
         }
     }
 }

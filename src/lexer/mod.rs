@@ -38,6 +38,10 @@ impl Token {
 #[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Clone)] //,Copy
 pub enum Tokens {
+    //Array
+    L_ARRAY,
+    R_ARRAY,
+    COMMA,
     //struct
 
     //Reserved
@@ -287,6 +291,12 @@ impl Lexer {
                 '%' => {
                     return self.make_token(Tokens::MOD); //t
                 }
+                '[' => {
+                    return self.make_token(Tokens::L_ARRAY);
+                }
+                ']' => {
+                    return self.make_token(Tokens::R_ARRAY);
+                }
                 '-' => {
                     return self.make_token(Tokens::SUB); //t
                 }
@@ -295,6 +305,10 @@ impl Lexer {
                 }
                 '*' => {
                     return self.make_token(Tokens::MUL);
+                }
+                ',' => {
+                    //println!("D");
+                    return self.make_token(Tokens::COMMA);
                 }
                 '(' => {
                     //println!("D");

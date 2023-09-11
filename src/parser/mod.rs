@@ -143,6 +143,47 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             let rhs = parse(v, r_bp); //expr_bp
             return ParseResult::Cons(f, vec![rhs]); //lexer//op//S
         }
+        Tokens::L_ARRAY => {
+            //println!("ARRAY!");
+            let mut lhs = Vec::new();
+            let mut l = f.clone();
+            l.token = Tokens::R_ARRAY; //()
+            lhs.push(ParseResult::Atom(l, Type::ANY)); //()
+            lhs.push(parse(v, 0)); //lexer
+                                   //assert_eq!(lexer.next(), Token::Op(')'));
+            let mut d = v.peek();
+            loop {
+                //while true
+                // println!("STEP {:?}",d);
+                match d.token {
+                    Tokens::COMMA => {
+                        // println!("COMMA");
+                        v.next();
+                        lhs.push(parse(v, 0));
+
+                        // v.next();
+                    }
+                    Tokens::R_ARRAY => {
+                        v.next();
+                        //   println!("FIN DE L'ARRAY");
+                        //lhs.push();
+                        break;
+                    }
+                    _ => {
+                        //dbg!(d).to_owned()
+                        error_parser(f.start, f.line as usize, format!("{} {:?}",String::from("Une virgule ou un ] est attendu pour finir une liste. Obtenu: "),d));
+                    }
+                }
+                //v.next();
+                d = v.peek();
+            }
+            //  v.consume(
+            //      Tokens::PARDRO,
+            //      &"Une parenthèse fermante est ici nécessaire",
+            //  ); //lexer
+            //lhs //return lhs;
+            return ParseResult::Cons(f, lhs);
+        }
         Tokens::PARGAU => {
             //Token::Op('(') => {
             //println!("DAMN");

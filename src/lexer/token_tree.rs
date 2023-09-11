@@ -36,6 +36,7 @@ impl TokenTree {
         d.map_firstchar.insert(
             'e',
             vec![
+                (String::from("et"), Tokens::COMMA),
                 (String::from("est égal à"), Tokens::EQUAL),
                 (
                     String::from("est plus grand que ou égal à"),

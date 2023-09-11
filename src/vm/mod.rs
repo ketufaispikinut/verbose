@@ -1,8 +1,8 @@
 use std::{
     collections::HashMap,
     io::{self, BufRead, Write},
-    thread,
-    time::{Duration, SystemTime},
+   // thread,
+    time:: SystemTime,//Duration,//{//}
 }; //, ops::IndexMut//{//}
 mod instruction_debugger;
 
@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 //use rmp::{Deserializer, Serializer};//s
 use crate::fatal;
 //use either::Either;
-const VM_DEBUG_LAYER: bool = !false; // !//!//!//!!!//!//!//!//!
+const VM_DEBUG_LAYER: bool = false; // !//!//!//!!!//!//!//!//!//!
 
 pub struct MachineVirtuelle {
     pub instruction: usize,
@@ -131,8 +131,8 @@ impl MachineVirtuelle {
         self.instruction = 0;
         self.depth = 0; //u32;
         let mut r = self.instructions.get(0).unwrap();
-        let mut instruction_move = 0;
-        let mut should_instruction_move = false;
+        let mut instruction_move;// = 0;
+        let mut should_instruction_move;// = false;
 
         while r != &Chunk::EOF {
             //println!("Instruction: {:?} {:?}",r,self.var_map);
@@ -143,6 +143,21 @@ impl MachineVirtuelle {
                                              // thread::sleep(Duration::from_millis(100*4*4));//500
                                              //println!("{}",self.stack.len());
             match r.clone() {
+                Chunk::ARRAY_BEGIN => {
+                    self.spawn(ValueContainer::new_marker(0));
+                }
+                Chunk::ARRAY_END => {
+                    let mut v = Vec::new();
+                    let mut k = self.stack.pop();
+                    while k.is_some() && (&k.clone().unwrap().value != &Value::MARKER) {
+                        v.push(k.unwrap());
+
+                        k = self.stack.pop(); //.
+                    }
+
+                    v.reverse();
+                    self.spawn(ValueContainer::new_array(v, 0));
+                }
                 Chunk::CLOCK => {
                     let d = SystemTime::now()
                         .duration_since(start)
@@ -153,7 +168,7 @@ impl MachineVirtuelle {
                 Chunk::VARIABLEREF(dddd) => {
                     //println!("REF");
                     //  println!("{:?}",self.var_map);
-                    let mut i = 0;
+                    let mut i;// = 0;
                     let mut has_value = false;
                     for j in 0..self.var_map.len() {
                         i = self.var_map.len() - j - 1; //i
@@ -406,6 +421,8 @@ impl MachineVirtuelle {
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //Copy,
 pub enum Chunk {
     //struct
+    ARRAY_BEGIN,
+    ARRAY_END,
     CLOCK,
     CONST(ValueContainer),
     ADD,
@@ -436,6 +453,8 @@ pub enum Value {
     STRING(String),
     BOOL(bool),
     FLOAT(f32),
+    ARRAY(Vec<ValueContainer>),
+    MARKER,
 }
 
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //,Copy//,IndexMut
@@ -447,6 +466,19 @@ pub struct ValueContainer {
 }
 
 impl ValueContainer {
+    pub fn new_array(v: Vec<ValueContainer>, index: u32) -> ValueContainer {
+        ValueContainer {
+            value: Value::ARRAY(v),
+            index: index,
+        }
+    }
+    pub fn new_marker(index: u32) -> ValueContainer {
+        //+//N
+        ValueContainer {
+            value: Value::MARKER,
+            index: index,
+        } //&//O
+    }
     pub fn same_type_as(&self, other: &ValueContainer) -> bool {
         //d
         return self.type_i32() == other.type_i32();
@@ -457,6 +489,8 @@ impl ValueContainer {
             Value::BOOL(_) => 1,
             Value::STRING(_) => 2,
             Value::FLOAT(_) => 3,
+            Value::MARKER => 4, //(_)
+            Value::ARRAY(_) => 5,
         }
     }
     pub fn new_string(value: String, index: u32) -> ValueContainer {
@@ -510,6 +544,19 @@ impl ValueContainer {
                     String::from("Non") //';
                 }
             }
+            Value::MARKER => {
+                fatal!("Ceci est une erreur du compileur (ou votre code est tarabiscoté). Impossible de convertir des types 'Marqueur' en texte");
+            }
+            Value::ARRAY(v) => {
+                let mut t = String::new(); //("");//
+                for i in v {
+                    if !t.is_empty() {
+                        t.push_str(&",");
+                    } //v
+                    t = t + &i.str(); //.push(v);
+                }
+                t
+            }
             Value::FLOAT(d) => {
                 //num
                 return f32::to_string(&d);
@@ -560,6 +607,12 @@ impl ValueContainer {
                 let m = _d.floor() as i32;
                 m
             }
+            Value::MARKER => {
+                fatal!("Il est impossible de convertir des marqueurs en nombre");
+            }
+            Value::ARRAY(_d) => {
+                fatal!("Il est impossible de convertir des listes en nombre");
+            }
         }
     }
 
@@ -601,7 +654,11 @@ impl ValueContainer {
                 //_t
                 return *d;
             } //}
-              //}
+            Value::MARKER => {
+                println!("Quelque chose ne tourne pas rond dans votre code. Vérifiez vos déclarations de listes");
+                true
+            }
+            Value::ARRAY(d) => return !d.is_empty(), //}
         }
     }
 }
@@ -614,6 +671,7 @@ pub enum ValueType {
     NUM,
 }
 
+#[allow(dead_code)]
 fn input_2(prompt: &str) -> io::Result<String> {
     print!("{}", prompt);
     io::stdout().flush()?;

@@ -114,6 +114,12 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
             GREATER_EQ => {
                 vm.chunk(Chunk::GREATER_EQ, i.start, i.line as usize);
             }
+            R_ARRAY => {
+                vm.chunk(Chunk::ARRAY_BEGIN, i.start, i.line as usize);
+            }
+            L_ARRAY => {
+                vm.chunk(Chunk::ARRAY_END, i.start, i.line as usize); // v.next();
+            }
             SMALLER_EQ => {
                 vm.chunk(Chunk::SMALLER_EQ, i.start, i.line as usize);
             }
@@ -235,8 +241,8 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                 }
                 if depth > 0 {
                     fatal!(
-                        "EOF obtenu en scannant pour un \"si\" (profondeur {})",
-                        depth
+                        "EOF obtenu en scannant pour un \"si\" (profondeur {}). Le si, le tant que ou autre se situe à la ligne {}",
+                        depth,i.line+1
                     );
                 } //0//32//JMPIFFALSE(usize::MAX)
                 vm.chunk(Chunk::IGNORE, i.start, i.line as usize); //self.instructions[index]
