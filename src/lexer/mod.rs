@@ -66,7 +66,9 @@ pub enum Tokens {
     TOKENS_IF_BEFORE,
     //Logic
     GREATER,
+    GREATER_EQ,
     SMALLER,
+    SMALLER_EQ,
     EQUAL,
     NOTEQUAL,
     NEGATION,

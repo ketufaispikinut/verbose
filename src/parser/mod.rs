@@ -84,6 +84,8 @@ pub fn is_op(t: &Tokens) -> bool {
         | Tokens::VARIABLE
         | Tokens::GREATER
         | Tokens::SMALLER
+        | Tokens::SMALLER_EQ
+        | Tokens::GREATER_EQ
         | Tokens::EQUAL
         | Tokens::PRINT
         | Tokens::IF//,
@@ -169,6 +171,8 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             Tokens::MOD => '%',
             Tokens::ASSIGN => '=',
             Tokens::SMALLER => '<',
+            Tokens::SMALLER_EQ => '≤',
+            Tokens::GREATER_EQ => '≥',
             Tokens::EQUAL => '_',
             Tokens::GREATER => '>', //<
             //Tokens::PRINT=>'p',

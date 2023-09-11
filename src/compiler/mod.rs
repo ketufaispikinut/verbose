@@ -101,6 +101,12 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
             SMALLER => {
                 vm.chunk(Chunk::SMALLER, i.start, i.line as usize);
             }
+            GREATER_EQ => {
+                vm.chunk(Chunk::GREATER_EQ, i.start, i.line as usize);
+            }
+            SMALLER_EQ => {
+                vm.chunk(Chunk::SMALLER_EQ, i.start, i.line as usize);
+            }
             TOKENS_IF_BEFORE => {
                 if_index.push(vm.instructions.len()); //l//0
                 vm.chunk(Chunk::IGNORE, i.start, i.line as usize);

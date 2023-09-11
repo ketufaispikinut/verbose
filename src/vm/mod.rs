@@ -209,7 +209,7 @@ impl MachineVirtuelle {
                     if let Value::STRING(_d) = &index.value { //D
                          //STRING//INT
                     } else {
-                        self.error("Erreur! Le nom de la variable est manquante!".to_string());
+                        self.error("Erreur! Le nom de la variable est manquant!".to_string());
                     }
                     let mut has_assigned = false;
                     for i in &mut self.var_map {
@@ -221,7 +221,7 @@ impl MachineVirtuelle {
                                 let c = i.get(&index.str());
                                 if !c.unwrap().same_type_as(&value) {
                                     //val
-                                    self.error(format!("Erreur! La variable {} n'as pas le même type que la variable qu'on lui assigne!",index.i32_val()));
+                                    self.error(format!("Erreur! La variable {} n'a pas le même type que la variable qu'on lui assigne!",index.i32_val()));
                                     //_
                                 }
                             }
@@ -331,7 +331,17 @@ impl MachineVirtuelle {
                     let b = self.pop(); //value
                     self.spawn(ValueContainer::new_bool(a == b, self.depth)); //index
                 }
-                _ => {}
+                Chunk::GREATER_EQ => {
+                    let a = self.pop();
+                    let b = self.pop();
+                    self.spawn(ValueContainer::new_bool(b.i32_val() >= a.i32_val(), 0));
+                }
+                Chunk::SMALLER_EQ => {
+                    let a = self.pop();
+                    let b = self.pop();
+                    self.spawn(ValueContainer::new_bool(b.i32_val() <= a.i32_val(), 0));
+                }
+                Chunk::EOF => {}
             }
             if should_instruction_move {
                 self.instruction = instruction_move;
@@ -392,6 +402,7 @@ impl MachineVirtuelle {
     }
 }
 
+#[allow(non_camel_case_types)]
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //Copy,
 pub enum Chunk {
     //struct
@@ -403,7 +414,9 @@ pub enum Chunk {
     MOD,
     MUL,
     SMALLER,
-    GREATER, //B
+    GREATER,    //B
+    GREATER_EQ, //B
+    SMALLER_EQ, //B
     EQUAL,
     EOF,
     PRINT,               //String//usize//usize

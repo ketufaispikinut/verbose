@@ -32,14 +32,16 @@ impl TokenTree {
             'e',
             vec![
                 (String::from("est égal à"), Tokens::EQUAL),
+                (String::from("est plus grand que ou égal à"), Tokens::GREATER_EQ), //égal à//EQUAL
                 (String::from("est plus grand que"), Tokens::GREATER), //égal à//EQUAL
+                (String::from("est plus petit que ou égal à"), Tokens::SMALLER_EQ), //égal à//EQUAL
                 (String::from("est plus petit que"), Tokens::SMALLER), //égal à//EQUAL//grand//GREATER
             ],
         );
         d.map_firstchar.insert(
             'n',
             vec![
-                (String::from("n'est pas egal a"), Tokens::NOTEQUAL),
+                (String::from("n'est pas égal a"), Tokens::NOTEQUAL),
                 (String::from("non"), Tokens::CONST),
             ], //'est pas egal a//NOTEQUAL
         );

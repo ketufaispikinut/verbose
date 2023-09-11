@@ -40,6 +40,8 @@ pub fn print_instructions(instructions: &[Chunk]) {
             Chunk::MUL => simple_instruction!("mul"),
             Chunk::SMALLER => simple_instruction!("<"),
             Chunk::GREATER => simple_instruction!(">"),
+            Chunk::GREATER_EQ => simple_instruction!(">="),
+            Chunk::SMALLER_EQ => simple_instruction!("<="),
             Chunk::EQUAL => simple_instruction!("="),
             Chunk::EOF => simple_instruction!("eof"),
             Chunk::PRINT => simple_instruction!("print"),
