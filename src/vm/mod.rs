@@ -548,14 +548,14 @@ impl ValueContainer {
                 fatal!("Ceci est une erreur du compileur (ou votre code est tarabiscoté). Impossible de convertir des types 'Marqueur' en texte");
             }
             Value::ARRAY(v) => {
-                let mut t = "".to_owned(); //("");//
+                let mut t = "[".to_owned(); //("");//
                 for i in v {
-                    if !t.is_empty() {
+                    if !(t.len()==1) {//is_empty()
                         t.push_str(&", ");
                     } //v
                     t = t + &i.str(); //.push(v);
                 }
-                t
+                t+&"]"
             }
             Value::FLOAT(d) => {
                 //num
