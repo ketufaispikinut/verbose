@@ -57,7 +57,11 @@ impl TokenTree {
                 (String::from("non"), Tokens::CONST),
             ], //'est pas egal a//NOTEQUAL
         );
-
+        d.map_firstchar.insert(
+            'é',vec![
+                (String::from("élément dans"),Tokens::INDEX)
+            ]
+        );
         d.map_firstchar //e//est egal a//EQUAL
             .insert('p', vec![(String::from("procedure"), Tokens::PROCE)]);
         d.map_firstchar //e//est egal a//EQUAL

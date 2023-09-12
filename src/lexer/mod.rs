@@ -38,6 +38,7 @@ impl Token {
 #[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Clone)] //,Copy
 pub enum Tokens {
+    INDEX,
     //Array
     L_ARRAY,
     R_ARRAY,
