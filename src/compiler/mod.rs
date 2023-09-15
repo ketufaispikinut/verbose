@@ -117,6 +117,9 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
             ADD_L=>{
                 vm.chunk(Chunk::ADD_ARR,i.start,i.line as usize);
             }
+            ADD_R=>{
+                
+            }
             //VARIABLE=>{
                 //println!("VAR");
             //}

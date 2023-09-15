@@ -575,4 +575,4 @@ pub fn sizeof_char_indices(t: CharIndices) -> usize {
     size
 }
 
-pub const DEBUG_LEXER: bool = false;
+pub const DEBUG_LEXER: bool = false;// !

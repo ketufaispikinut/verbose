@@ -144,7 +144,60 @@ impl MachineVirtuelle {
                                              //println!("{}",self.stack.len());
             match r.clone() {
                 Chunk::ADD_ARR=>{
-                    
+                    let index=self.pop();//var
+                    let value=self.pop();//d
+                    //println!("{:?} {:?}",index,value);
+                    let mut has_assigned=false;
+                    for i in &mut self.var_map {
+                        if i.contains_key(&(index.str())) {
+                            //println!("FIRST");
+                            //k//str()
+                            //i[&index.str()]=value;
+                            {
+                                let c = i.get(&index.str());
+                                if !c.unwrap().same_type_as(&value)&&!c.unwrap().is_arr() {
+                                    //val
+                                    //println!("RRRR");
+                                    self.error(format!("Erreur! La variable {} n'a pas le même type que la variable qu'on lui assigne!",index.i32_val()));
+                                    //_
+                                }
+                            }
+                          /*   if let Some(dd)=&index_array{
+                                let d=i.get_mut(&index.str());//k
+                                if let Some(hash)=d{
+                                    match &mut hash.value{// mut 
+                                        Value::ARRAY(d)=>{
+                                            //println!("index_array: {:?}",index_array);
+                                            d[dd.i32_val() as usize]=value.clone();
+                                        }
+                                        _=>{
+                                            self.error(format!("On peut seulement indexer à une liste"));
+                                        }
+                                    }
+                                }
+                            }
+                            else{ *///*/
+                                
+                                if let Some(k)=i.get_mut(&index.str()){
+                                    //k
+                                    if let Value::ARRAY(k)=&mut k.value{
+                                        k.push(value.clone());//
+                                        has_assigned = true;
+                                        break;
+                                    }
+                                    else{
+                                        self.error("La variable n'est pas une liste".to_string());//message
+                                    }
+                                }
+                            //i.insert(index.str(), value.clone()); //&//str()
+                            }
+                            
+                            
+                        }
+                        
+                    if !has_assigned{
+                        self.error("Impossible d'ajouter à une liste inexistante".to_string());
+                    }
                 }
                 Chunk::ARRAY_BEGIN => {
                     self.spawn(ValueContainer::new_marker(0));

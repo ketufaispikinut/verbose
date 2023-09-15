@@ -96,6 +96,7 @@ pub fn is_op(t: &Tokens) -> bool {
         | Tokens::IF//,
         | Tokens::LOOP//,
         | Tokens::INDEX
+        | Tokens::ADD_L
         => true,
         _ => false,
     }
@@ -149,15 +150,23 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             let rhs = parse(v, r_bp); //expr_bp
             return ParseResult::Cons(f, vec![rhs]); //lexer//op//S
         }
+        //Tokens::ADD_R=>{
+       //     println!("DDDD");
+       //     fatal!("")
+      //  }
         Tokens::ADD_L=>{
+            //println!("OOOOO");
             let m=parse(v,0);
+            //println!("m: {:?}",m);
             v.consume(Tokens::ADD_R, "Syntaxe: Ajoute X à VARIABLE");//message//let c=
             let b=parse(v,0);
-            if let ParseResult::Atom(a,b )=&b{//c
+            //println!("b: {:?}",b);
+            if let ParseResult::Atom(a,_b )=&b{//c
                 if a.token!=Tokens::VARIABLE{//&
                     v.fail("Syntaxe: Ajoute X à VARIABLE".to_string());//v.consume(Tokens::, message)
                 }
             }
+            //println!("{:?}",v.peek());
             //println!("OK DOK");
             return ParseResult::Cons(f,vec![m,b]);
         }
@@ -325,6 +334,7 @@ pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
                             for i in &mut d{
                                 if i.token==Tokens::VARIABLE{
                                     i.token=Tokens::VARIABLE_ASSIGN;
+                                    //println!("ASS");
                                 }
                             }
                             k.append(&mut d);//c
@@ -356,13 +366,16 @@ pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
                 let mut v=vec.clone();
                 let mut m=v.pop().unwrap();//vec
                 if let ParseResult::Atom(d,_a )=&mut m{
-                    d.token=Tokens::VARIABLE_ASSIGN;
+                    d.token=Tokens::CONST_STR;//VARIABLE_ASSIGN;
+                   //println!("ASS");
                 }
 
                 v.push(m);
                 for i in v{//b//ec
                     k.append(&mut back_to_tokens(i, in_if).0);
                 }
+                k.push(token);
+                return (k,Type::ANY)
             }
             if token.token == Tokens::LOOP {
                 //IF
@@ -491,7 +504,7 @@ pub fn error_parser(char_index: usize, line_number: usize, message: String) {
     }
 }
 pub const ERROR_INSTANTLY_QUITS: bool = true; //error_instantly_quitserror_instantly_quits//!
-pub const DEBUG_PARSER: bool = false;
+pub const DEBUG_PARSER: bool = false;// !
 pub const VAUT_DANS_LES_SI_EQUIVAUT_A_EGAL: bool = true;
 pub fn is_bool(d: String) -> bool {
     match d.as_str() {
