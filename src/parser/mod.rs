@@ -464,7 +464,7 @@ pub fn is_bool(d: String) -> bool {
     }
 }
 
-pub const DEBUG_TREE: bool = true;
+pub const DEBUG_TREE: bool = !true;
 pub fn token_supports_str(d: &Tokens) -> bool {
     match d {
         Tokens::ASSIGN => true,
