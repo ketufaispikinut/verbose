@@ -114,6 +114,9 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
             GREATER_EQ => {
                 vm.chunk(Chunk::GREATER_EQ, i.start, i.line as usize);
             }
+            //VARIABLE=>{
+                //println!("VAR");
+            //}
             R_ARRAY => {
                 vm.chunk(Chunk::ARRAY_BEGIN, i.start, i.line as usize);
             }

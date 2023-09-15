@@ -59,7 +59,8 @@ impl TokenTree {
         );
         d.map_firstchar.insert(
             'é',vec![
-                (String::from("élément dans"),Tokens::INDEX)
+                (String::from("élément dans"),Tokens::INDEX),
+                (String::from("élément de"),Tokens::INDEX)//ans
             ]
         );
         d.map_firstchar //e//est egal a//EQUAL

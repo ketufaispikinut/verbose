@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 //use rmp::{Deserializer, Serializer};//s
 use crate::fatal;
 //use either::Either;
-const VM_DEBUG_LAYER: bool = false; // !//!//!//!!!//!//!//!//!//!
+const VM_DEBUG_LAYER: bool = false; // !//!//!//!!!//!//!//!//!//!//!
 
 pub struct MachineVirtuelle {
     pub instruction: usize,
@@ -214,18 +214,46 @@ impl MachineVirtuelle {
                 } //()
                 Chunk::ASSIGN => {
                     //        println!(
-                    //      "{:?}",&self.var_map.len()
+                    //  Chunk::ASSIGN    "{:?}",&self.var_map.len()
                     //           );
                     let value = self.pop();
-
-                    let index = self.pop();
-
+                    //if //mut 
+                    let mut index = self.pop();
+                    //let mut cd;
+                    let mut valid_index=!false;
+                    let mut index_array=None;
+                    if let Value::INT(_d)=&index.value{
+                        valid_index=false;
+                        let d=self.pop();
+                        if let Value::STRING(_d)=&d.value{
+                            valid_index=true;
+                            index_array=Some(d.clone());
+                        }
+                        //else{
+                        //    println!("VAL: {:?}",d.value);
+                            //println!("{:?}",self.stack);
+                        //}
+                    }
+                    if index_array.is_some()    {
+                        let m=index.clone();
+                        index=index_array.unwrap();
+                        index_array=Some(m);
+                    }
                     //println!("{}",index.str());//value
-                    if let Value::STRING(_d) = &index.value { //D
+                  //  if let Value::STRING(_d) = &index.value { //D
                          //STRING//INT
-                    } else {
+                 //   } else if let Value::INT(m)=&index.value.clone(){
+                 //       cd= self.pop();//if
+                 //       if let Value::STRING(_d)=&cd.value{
+                 //           index=cd;//value
+                 //           cd=ValueContainer::new_num(*m,self.depth);//value// index
+                 //       }
+                        //println!("DDDD {:?}",index.value);
+                    if !valid_index {//}else
+                        
                         self.error("Erreur! Le nom de la variable est manquant!".to_string());
                     }
+                    
                     let mut has_assigned = false;
                     for i in &mut self.var_map {
                         if i.contains_key(&(index.str())) {
@@ -234,13 +262,30 @@ impl MachineVirtuelle {
                             //i[&index.str()]=value;
                             {
                                 let c = i.get(&index.str());
-                                if !c.unwrap().same_type_as(&value) {
+                                if !c.unwrap().same_type_as(&value)&&!c.unwrap().is_arr() {
                                     //val
+                                    //println!("RRRR");
                                     self.error(format!("Erreur! La variable {} n'a pas le même type que la variable qu'on lui assigne!",index.i32_val()));
                                     //_
                                 }
                             }
+                            if let Some(dd)=&index_array{
+                                let d=i.get_mut(&index.str());//k
+                                if let Some(hash)=d{
+                                    match &mut hash.value{// mut 
+                                        Value::ARRAY(d)=>{
+                                            //println!("index_array: {:?}",index_array);
+                                            d[dd.i32_val() as usize]=value.clone();
+                                        }
+                                        _=>{
+                                            self.error(format!("On peut seulement indexer à une liste"));
+                                        }
+                                    }
+                                }
+                            }
+                            else{
                             i.insert(index.str(), value.clone()); //&//str()
+                            }
                             has_assigned = true;
                             break;
                         }
@@ -248,6 +293,9 @@ impl MachineVirtuelle {
                     let m = self.var_map.len() - 1;
                     //println!("{}",self.var_map.len());
                     if !has_assigned {
+                        if index_array.is_some(){
+                            self.error(format!("On ne peut pas assigner à l'index d'une variable inexistante!"));
+                        }
                         //println!("NOUVELLE VARIABLE");
                         let d = self.var_map.get_mut(m);
                         if let Some(d) = d {
@@ -466,6 +514,16 @@ pub struct ValueContainer {
 }
 
 impl ValueContainer {
+    pub fn is_arr(&self)->bool{
+        match &self.value{
+            Value::ARRAY(d)=>{
+                true
+            }
+            _=>{
+                false
+            }
+        }
+    }
     pub fn new_array(v: Vec<ValueContainer>, index: u32) -> ValueContainer {
         ValueContainer {
             value: Value::ARRAY(v),

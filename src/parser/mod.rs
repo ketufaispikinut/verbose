@@ -90,6 +90,7 @@ pub fn is_op(t: &Tokens) -> bool {
         | Tokens::PRINT
         | Tokens::IF//,
         | Tokens::LOOP//,
+        | Tokens::INDEX
         => true,
         _ => false,
     }
@@ -104,7 +105,7 @@ pub enum Type {
     ANY,
 }
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub enum ParseResult {
     Atom(Token, Type),             //vec!//[//]
     Cons(Token, Vec<ParseResult>), //,Type
@@ -216,6 +217,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             Tokens::GREATER_EQ => '≥',
             Tokens::EQUAL => '_',
             Tokens::GREATER => '>', //<
+            Tokens::INDEX=>'.',
             //Tokens::PRINT=>'p',
             _t => return lhs, //fatal!("o non (op): {:?}", t), //bad token
         };
@@ -272,7 +274,8 @@ pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
                             let mut m = token.clone();
                             m.token = Tokens::VARIABLE_ASSIGN;
                             k.push(m);
-                        } else {
+                         } 
+                        else {
                             error_parser(
                                 token.start,
                                 token.line as usize,
@@ -280,6 +283,30 @@ pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
                             ); //,tp
                         }
                     } else if let ParseResult::Cons(a, b) = d {
+                        if a.token==Tokens::INDEX{//else if token
+                            //println!("{:?}",b);
+                            //let mut c=b.clone();
+                            //c.reverse();
+                            // /for i in c{//b//i.clone()
+                                //k.push(i.b);//m
+                            //}
+                            let mut c=b.clone();
+                            let mut d:Vec<Token>=Vec::new();
+                            c.reverse();
+                            for i in c{//b
+                                
+                                d.append(&mut back_to_tokens(i.clone(), in_if).0);//other
+                            }//c
+                            for i in &mut d{
+                                if i.token==Tokens::VARIABLE{
+                                    i.token=Tokens::VARIABLE_ASSIGN;
+                                }
+                            }
+                            k.append(&mut d);//c
+                            //return (d,Type::ANY);
+                            
+                        } 
+                        else{
                         //,tp
                         error_parser(
                             a.start,
@@ -287,6 +314,7 @@ pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
                             "Le coté gauche d'un 'vaut' ne peut pas être une expression"
                                 .to_string(),
                         );
+                    }
                     }
                 }
                 let mut d = vec.into_iter();
