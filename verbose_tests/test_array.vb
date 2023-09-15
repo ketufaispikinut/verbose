@@ -7,3 +7,8 @@ ListeFautive vaut [1,2,3,4,5,6,8]
 Afficher "Voici une liste fautive: "+ListeFautive
 6 élément de ListeFautive vaut 7
 Afficher "Voici une liste fautive corrigée: "+ListeFautive
+
+ListeVide vaut []
+Afficher "Liste vide: "+ListeVide
+Ajouter 5 à ListeVide
+Afficher "Liste vide: (contient maintenant 5) "+ListeVide

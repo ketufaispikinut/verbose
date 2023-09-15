@@ -29,8 +29,10 @@ impl TokenTree {
                 (String::from("afficher"), Tokens::PRINT),
                 (String::from("affiche"), Tokens::PRINT), //)
                 (String::from("avec"), Tokens::PARAM),    //fficher//PRINT
+                (String::from("ajouter"),Tokens::ADD_L)
             ],
         );
+        d.map_firstchar.insert('à', vec![(String::from("à"),Tokens::ADD_R)]);//k//v//L
         d.map_firstchar
             .insert('f', vec![(String::from("fin"), Tokens::END)]);
         d.map_firstchar.insert(

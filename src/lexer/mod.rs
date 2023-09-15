@@ -43,6 +43,8 @@ pub enum Tokens {
     L_ARRAY,
     R_ARRAY,
     COMMA,
+    ADD_L,
+    ADD_R,
     //struct
 
     //Reserved
@@ -291,6 +293,9 @@ impl Lexer {
                 }
                 '%' => {
                     return self.make_token(Tokens::MOD); //t
+                }
+                'à'=>{
+                    return self.make_token(Tokens::ADD_R);//token
                 }
                 '[' => {
                     return self.make_token(Tokens::L_ARRAY);

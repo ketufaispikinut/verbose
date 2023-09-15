@@ -35,6 +35,7 @@ pub fn print_instructions(instructions: &[Chunk]) {
                     RESET
                 )
             }
+            Chunk::ADD_ARR=> simple_instruction!("add_arr"),//ec// 
             Chunk::ADD => simple_instruction!("add"),
             Chunk::SUB => simple_instruction!("sub"),
             Chunk::DIV => simple_instruction!("div"),

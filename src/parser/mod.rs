@@ -22,6 +22,10 @@ impl TokenBox {
         //-//s//+ 1
         return self.vec[self.index].clone(); //.token
     }
+    pub fn fail(&self,t:String){
+        
+        fatal!("{}", t);//message
+    }
     pub fn is_at_end(&self) -> bool {
         return self.index >= self.vec.len();
     }
@@ -29,6 +33,7 @@ impl TokenBox {
         if self.peek().token == token {
             self.next();
         } else {
+            println!("Ligne: {}",self.vec[self.index].line+1);
             fatal!("{}", message);
         }
     }
@@ -144,15 +149,33 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             let rhs = parse(v, r_bp); //expr_bp
             return ParseResult::Cons(f, vec![rhs]); //lexer//op//S
         }
+        Tokens::ADD_L=>{
+            let m=parse(v,0);
+            v.consume(Tokens::ADD_R, "Syntaxe: Ajoute X à VARIABLE");//message//let c=
+            let b=parse(v,0);
+            if let ParseResult::Atom(a,b )=&b{//c
+                if a.token!=Tokens::VARIABLE{//&
+                    v.fail("Syntaxe: Ajoute X à VARIABLE".to_string());//v.consume(Tokens::, message)
+                }
+            }
+            //println!("OK DOK");
+            return ParseResult::Cons(f,vec![m,b]);
+        }
         Tokens::L_ARRAY => {
             //println!("ARRAY!");
             let mut lhs = Vec::new();
             let mut l = f.clone();
             l.token = Tokens::R_ARRAY; //()
+            
             lhs.push(ParseResult::Atom(l, Type::ANY)); //()
+            if v.peek().token==Tokens::R_ARRAY{//d
+                return ParseResult::Cons(f,lhs);//l//Vec::new()
+            }
             lhs.push(parse(v, 0)); //lexer
                                    //assert_eq!(lexer.next(), Token::Op(')'));
             let mut d = v.peek();
+            
+            //println!("ARBEGIN");
             loop {
                 //while true
                 // println!("STEP {:?}",d);
@@ -166,6 +189,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
                     }
                     Tokens::R_ARRAY => {
                         v.next();
+                        //println!("AREND");
                         //   println!("FIN DE L'ARRAY");
                         //lhs.push();
                         break;
@@ -198,7 +222,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
                 // }
         }
         t_ => {
-            fatal!("o non (lhs): {:?}", t_);
+            fatal!("o non (lhs): {:?} à la ligne {}", t_,f.line+1);
         }
     }; //
     loop {
@@ -218,6 +242,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             Tokens::EQUAL => '_',
             Tokens::GREATER => '>', //<
             Tokens::INDEX=>'.',
+            //Tokens::ADD_R=>'.',
             //Tokens::PRINT=>'p',
             _t => return lhs, //fatal!("o non (op): {:?}", t), //bad token
         };
@@ -326,6 +351,18 @@ pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
                 }
                 k.push(token);
                 return (k, Type::ANY); //itype
+            }
+            else if token.token==Tokens::ADD_L{
+                let mut v=vec.clone();
+                let mut m=v.pop().unwrap();//vec
+                if let ParseResult::Atom(d,_a )=&mut m{
+                    d.token=Tokens::VARIABLE_ASSIGN;
+                }
+
+                v.push(m);
+                for i in v{//b//ec
+                    k.append(&mut back_to_tokens(i, in_if).0);
+                }
             }
             if token.token == Tokens::LOOP {
                 //IF

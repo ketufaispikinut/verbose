@@ -143,6 +143,9 @@ impl MachineVirtuelle {
                                              // thread::sleep(Duration::from_millis(100*4*4));//500
                                              //println!("{}",self.stack.len());
             match r.clone() {
+                Chunk::ADD_ARR=>{
+                    
+                }
                 Chunk::ARRAY_BEGIN => {
                     self.spawn(ValueContainer::new_marker(0));
                 }
@@ -469,6 +472,7 @@ impl MachineVirtuelle {
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //Copy,
 pub enum Chunk {
     //struct
+    ADD_ARR,
     ARRAY_BEGIN,
     ARRAY_END,
     CLOCK,
