@@ -27,6 +27,9 @@ pub fn prefix_binding_power(t: char) -> Option<((), u8)> {
             //2
             ((), 0) //0//1
         }
+        'P'=>{//POP
+            ((),20)
+        }
         'i' => ((), 0),
         'w' => ((), 0),
         _ => {

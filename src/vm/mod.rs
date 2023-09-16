@@ -248,6 +248,68 @@ impl MachineVirtuelle {
 
                     // }
                 }
+                Chunk::POP=>{
+                    let index=self.stack.pop();
+                    let mut c=None;//ValueContainer::new_bool(false, 0);
+                    if let Some(index)=index{
+                    for i in &mut self.var_map {
+                        if i.contains_key(&(index.str())) {
+                            //println!("FIRST");
+                            //k//str()
+                            //i[&index.str()]=value;
+                         //   {
+                             //   let c = i.get(&index.str());
+                           //     if !c.unwrap().same_type_as(&value)&&!c.unwrap().is_arr() {
+                                    //val
+                                    //println!("RRRR");
+                         //           //_
+                        //        }
+                         //   }
+                          /*   if let Some(dd)=&index_array{
+                                let d=i.get_mut(&index.str());//k
+                                if let Some(hash)=d{
+                                    match &mut hash.value{// mut 
+                                        Value::ARRAY(d)=>{
+                                            //println!("index_array: {:?}",index_array);
+                                            d[dd.i32_val() as usize]=value.clone();
+                                        }
+                                        _=>{
+                                            self.error(format!("On peut seulement indexer à une liste"));
+                                        }
+                                    }
+                                }
+                            }
+                            else{ *///*/
+                                
+                                if let Some(k)=i.get_mut(&index.str()){
+                                    //k
+                                    if let Value::ARRAY(k)=&mut k.value{
+                                        //k.push(value.clone());//
+                                        //has_assigned = true;
+                                        if k.is_empty(){
+                                            self.error("La liste est vide".to_string());//message
+                                        }
+                                        c=Some(k.pop().unwrap());
+                                        //self.spawn(k.pop().unwrap());//d
+                                        //break;
+                                    }
+                                    else{
+                                        self.error("La variable n'est pas une liste".to_string());//message
+                                    }
+                                }
+                            //i.insert(index.str(), value.clone()); //&//str()
+                            }
+                            
+                            
+                        }
+                    }
+                    if let Some(k)=c{//c.is_some()
+                        self.spawn(k);
+                    }
+                    else{
+                        self.error("La variable n'existe pas!".to_string());
+                    }
+                }
                 Chunk::VARIABLEASS(dddd) => {
                     //string
                     self.spawn(ValueContainer::new_string(dddd, 0)); // { value: (), index: () }//value, index
@@ -525,6 +587,7 @@ impl MachineVirtuelle {
 #[derive(PartialEq, Clone, Debug, Serialize, Deserialize)] //Copy,
 pub enum Chunk {
     //struct
+    POP,
     ADD_ARR,
     ARRAY_BEGIN,
     ARRAY_END,

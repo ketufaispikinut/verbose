@@ -12,3 +12,5 @@ ListeVide vaut []
 Afficher "Liste vide: "+ListeVide
 Ajouter 5 à ListeVide
 Afficher "Liste vide: (contient maintenant 5) "+ListeVide
+Afficher "Dernier élément de la liste: "+ enlève le dernier élément de ListeVide
+Afficher "La liste vaut maintenant: "+ListeVide

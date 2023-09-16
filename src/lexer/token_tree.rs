@@ -38,6 +38,7 @@ impl TokenTree {
         d.map_firstchar.insert(
             'e',
             vec![
+                (String::from("enlève le dernier élément de"),Tokens::POP),// 
                 (String::from("et"), Tokens::COMMA),
                 (String::from("est égal à"), Tokens::EQUAL),
                 (
@@ -65,6 +66,8 @@ impl TokenTree {
                 (String::from("élément de"),Tokens::INDEX)//ans
             ]
         );
+      //  d.map_firstchar.insert(
+      //      , v)
         d.map_firstchar //e//est egal a//EQUAL
             .insert('p', vec![(String::from("procedure"), Tokens::PROCE)]);
         d.map_firstchar //e//est egal a//EQUAL

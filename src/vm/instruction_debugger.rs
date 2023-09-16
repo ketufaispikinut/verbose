@@ -48,6 +48,7 @@ pub fn print_instructions(instructions: &[Chunk]) {
             Chunk::EQUAL => simple_instruction!("="),
             Chunk::EOF => simple_instruction!("eof"),
             Chunk::PRINT => simple_instruction!("print"),
+            Chunk::POP=>simple_instruction!("array_pop"),
             Chunk::VARIABLEREF(ref s) => eprintln!("{}read{} {}", INSTRUCTION_COLOR, RESET, s),
             Chunk::VARIABLEASS(ref s) => eprintln!("{}push{} {}", INSTRUCTION_COLOR, RESET, s),
             Chunk::ASSIGN => simple_instruction!("assign"),

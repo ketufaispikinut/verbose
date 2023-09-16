@@ -230,6 +230,10 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             lhs //return lhs;
                 // }
         }
+        Tokens::POP=>{//0
+            let lhs = parse(v, min_power*0); //lexer
+            return ParseResult::Cons(f,vec![lhs]); //return lhs;
+        }
         t_ => {
             fatal!("o non (lhs): {:?} à la ligne {}", t_,f.line+1);
         }
@@ -251,6 +255,7 @@ fn parse(v: &mut TokenBox, min_power: u8) -> ParseResult {
             Tokens::EQUAL => '_',
             Tokens::GREATER => '>', //<
             Tokens::INDEX=>'.',
+            Tokens::POP=>'P',
             //Tokens::ADD_R=>'.',
             //Tokens::PRINT=>'p',
             _t => return lhs, //fatal!("o non (op): {:?}", t), //bad token
@@ -300,7 +305,34 @@ pub fn back_to_tokens(b: ParseResult, in_if: bool) -> (Vec<Token>, Type) {
             itype = d;
         }
         ParseResult::Cons(token, vec) => {
-            if token.token == Tokens::ASSIGN && !in_if {
+            if token.token==Tokens::POP{
+                let m=vec.get(0);//pop()
+                if vec.len()!=1{//0
+
+                    
+                }
+                else{
+                    let d=m.unwrap();//mut 
+                    match d{
+                        ParseResult::Atom(a,_b)=>{
+                            let mut a=a.clone();
+                            if a.token==Tokens::VARIABLE{
+                            a.token=Tokens::VARIABLE_ASSIGN;
+                            return (vec![a,token.clone()],Type::ANY);//.clone()
+                        }
+                        }//back_to_tokens(b, in_if)
+                        _=>{
+
+                        }
+                       // else{
+
+                       // }
+                }//return 
+                fatal!("Ligne: {}\n Syntaxe: enlève le dernier élément de VARIABLE",token.line+1);
+
+            }
+        }
+            else if token.token == Tokens::ASSIGN && !in_if {
                 if let Some(d) = vec.get(1 - 1) {
                     if let ParseResult::Atom(token, tp) = d {
                         //_

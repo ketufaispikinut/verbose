@@ -12,7 +12,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct JmpBackwardRef {
-    index: usize,
+    //index: usize,
     index_to: usize,
     is_loop: bool,
     usize_from: usize,
@@ -178,6 +178,9 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     i.line as usize,
                 ); //New_f//value, index
             }
+            POP=>{//chunk
+                vm.chunk(Chunk::POP, i.start,i.line as usize);//start, line
+            }
             DIV => {
                 vm.chunk(Chunk::DIV, i.start, i.line as usize);
             }
@@ -199,6 +202,9 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
             PRINT => {
                 vm.chunk(Chunk::PRINT, i.start, i.line as usize);
             }
+            POP=>{//Tokens::
+                //depth
+            }
             IF | LOOP => {
                 let is_a_loop = i.token == LOOP; //_if
                 let mut k = 0 + 1; //()
@@ -218,6 +224,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                     if let Some(d) = tok.next() {
                         //n
                         match d.token {
+                            
                             Tokens::END => {
                                 //  println!("END");
                                 depth -= 1;
@@ -259,7 +266,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                                                                    //println!("R!");//-1
                 vm.chunk(Chunk::IGNORE, i.start, i.line as usize);
                 backward_jmps.push(JmpBackwardRef {
-                    index: n as usize,
+                   // index: n as usize,
                     index_to: n as usize + k, // + 1 - 1
                     is_loop: is_a_loop,
                     usize_from: vm.instructions.len() - 2, //
@@ -323,7 +330,7 @@ pub fn compile_to_bitcode(tokens: &Vec<Token>, vm: &mut MachineVirtuelle) {
                                                                    //if is_a_loop{}
                                                                    //println!("R!");//-1
                 backward_jmps.push(JmpBackwardRef {
-                    index: n as usize,
+                   // index: n as usize,
                     index_to: n as usize + k, // + 1 - 1
                     is_loop: false,
                     usize_from: vm.instructions.len() - 1, //
